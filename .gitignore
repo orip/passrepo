@@ -1,0 +1,32 @@
+# built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+bin/
+libs/armeabi/
+libs/armeabi-v7a/
+obj/
+gen/
+
+# Local configuration files (sdk path, etc)
+local.properties
+
+# Crash logs
+hs_err_pid*
+
+# IntelliJ IDEA
+.idea/workspace.xml
+out
+
+# General
+*~
+.*.swp
+*.pyc
+.DS_Store
