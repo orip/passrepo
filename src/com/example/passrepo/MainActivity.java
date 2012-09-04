@@ -1,8 +1,12 @@
 package com.example.passrepo;
 
-import android.os.Bundle;
+import com.example.passrepo.crypto.PasswordHasher;
+
 import android.app.Activity;
+import android.os.Bundle;
+import android.util.Base64;
 import android.view.Menu;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
@@ -10,6 +14,8 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        ((TextView)findViewById(R.id.foo)).setText(Base64.encodeToString(PasswordHasher.hash("foo"), Base64.NO_WRAP));
     }
 
     @Override

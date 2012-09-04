@@ -9,6 +9,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:text="@string/hello_world"
+        android:id="@+id/foo"
         tools:context=".MainActivity" />
 
 </RelativeLayout>

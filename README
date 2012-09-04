@@ -1,0 +1,5 @@
+External projects used:
+
+The Lambdaworks Java implementation of Colin Percival's scrypt
+URL: https://github.com/wg/scrypt
+License: Apache License v2.0
