@@ -75,9 +75,8 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     protected void onResume() {
         super.onResume();
         testDriveEncryption();
-        
 
-        loadModel();
+        IO.loadModel(this);
     }
     
     

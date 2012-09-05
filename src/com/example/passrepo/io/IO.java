@@ -40,30 +40,28 @@ public class IO {
     }
 
     public static void loadModel(final Context context) {
-        if (Model.currentModel == null) {
-            Logger.i("IO", "loading model");
+        Logger.i("IO", "loading model");
 
-            try {                
-                String fileContents = CharStreams.toString(new InputSupplier<InputStreamReader>() {
-                    public InputStreamReader getInput() throws IOException {
-                        return new InputStreamReader(context.openFileInput(PASSWORD_DATABASE_FILENAME), Charsets.UTF_8);
-                    }
-                });
-                
-                GoogleDriveUtil gdu = new GoogleDriveUtil(context.getApplicationContext());
-                if (gdu.isAuthorized()) {
-                    fileContents = gdu.download();
+        try {
+            String fileContents = CharStreams.toString(new InputSupplier<InputStreamReader>() {
+                public InputStreamReader getInput() throws IOException {
+                    return new InputStreamReader(context.openFileInput(PASSWORD_DATABASE_FILENAME), Charsets.UTF_8);
                 }
-                Model.currentModel = IO.modelFromEncryptedString(fileContents, DummyContent.dummyKey);
-                Logger.i("IO", "sucessfully loaded model from disk");
+            });
 
-            } catch (IOException e) {
-                Model.currentModel = DummyContent.model;
-                Logger.i("IO", "loaded dummy model");
+            GoogleDriveUtil gdu = new GoogleDriveUtil(context.getApplicationContext());
+            if (gdu.isAuthorized()) {
+                fileContents = gdu.download();
             }
+            Model.currentModel = IO.modelFromEncryptedString(fileContents, DummyContent.dummyKey);
+            Logger.i("IO", "sucessfully loaded model from disk");
+
+        } catch (IOException e) {
+            Model.currentModel = DummyContent.model;
+            Logger.i("IO", "loaded dummy model");
         }
     }
-    
+
     public static void saveModel(final Context context) {
         try {
             CharStreams.write(IO.modelToEncryptedString(Model.currentModel), new OutputSupplier<OutputStreamWriter>() {
@@ -75,7 +73,7 @@ public class IO {
             Files.write(IO.modelToEncryptedString(Model.currentModel), f, Charsets.UTF_8);
             Logger.i("IO", "saved model to disk");
             new GoogleDriveUtil(context.getApplicationContext()).create(f);
-            
+
             Logger.i("IO", "saved model to drive!!!");
         } catch (IOException e) {
             Logger.i("IO", "error saving model to disk");
