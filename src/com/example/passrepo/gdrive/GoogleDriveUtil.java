@@ -8,7 +8,6 @@ import android.content.Intent;
 
 import com.example.passrepo.GoogleAuthActivity;
 import com.example.passrepo.PassRepoGoogleAuthorizationCodeFlow;
-import com.example.passrepo.store.SharedPreferencesCredentialStore;
 import com.example.passrepo.util.Logger;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;

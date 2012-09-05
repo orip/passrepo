@@ -19,7 +19,7 @@ public class GoogleAuthWebViewClient extends WebViewClient {
     private GoogleAuthorizationCodeFlow flow;
     private GoogleAuthWebViewClientCallback callback;
     private boolean isFinishedRedirect;
-    
+        
     public GoogleAuthWebViewClient(GoogleAuthorizationCodeFlow flow, GoogleAuthWebViewClientCallback callback) {
         this.flow = flow;
         this.callback = callback;
@@ -33,7 +33,7 @@ public class GoogleAuthWebViewClient extends WebViewClient {
     }            
     
     @Override
-    public void onPageFinished(WebView view, String url) {
+    public void onPageFinished(WebView view, final String url) {
         System.out.println("page finished: " + url);
         
         if (!url.startsWith("http://local")) {
@@ -51,37 +51,29 @@ public class GoogleAuthWebViewClient extends WebViewClient {
             
             isFinishedRedirect = true;
         }
-    
-        String authorizationCode = extractParamFromUrl(url, "code");
         
-        GoogleAuthorizationCodeTokenRequest tokenRequest =
-                flow.newTokenRequest(authorizationCode).setRedirectUri(Constants.REDIRECT_URI);
-        
-        NetworkRunnable nr = new NetworkRunnable(tokenRequest);
-        
-        Thread t = new Thread(nr);
-        t.start();
-        Logger.i("GoogleAuthWebView", "Waiting on thread..");
-        try {
-            t.join(20000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Logger.i("GoogleAuthWebView", "done waiting!");
-        
-        GoogleTokenResponse gtk = nr.getRes();
-        
-        try {
-            flow.createAndStoreCredential(gtk, "");
-            
-            Logger.i("GoogleAuthWebView", "Finished storing credentials! Going back!");
-            
-            callback.onSuccess();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
+        // Send the token request (must be asynchronously so not to interfere main thread).
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String authorizationCode = extractParamFromUrl(url, "code");
+                
+                GoogleAuthorizationCodeTokenRequest tokenRequest =
+                        flow.newTokenRequest(authorizationCode).setRedirectUri(Constants.REDIRECT_URI);
+
+                try {
+                    GoogleTokenResponse gtr = tokenRequest.execute(); 
+                    flow.createAndStoreCredential(gtr, "");
+                    callback.onSuccess();
+                    
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    callback.onError();
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
+    }    
 
     private static String extractParamFromUrl(String url,String paramName) {
         String queryString = url.substring(url.indexOf("?", 0)+1,url.length());
