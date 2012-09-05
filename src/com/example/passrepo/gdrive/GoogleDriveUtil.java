@@ -166,9 +166,6 @@ public class GoogleDriveUtil {
     }
     
     public boolean isAuthorized() {
-        clearCache();
-        
-        Credential cred = null;
         try {
             Credential cred = PassRepoGoogleAuthorizationCodeFlow.getInstance(context.getApplicationContext()).loadCredential("");
             
