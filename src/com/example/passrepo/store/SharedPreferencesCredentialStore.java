@@ -27,6 +27,7 @@ public class SharedPreferencesCredentialStore implements CredentialStore {
         Editor editor = prefs.edit();
         editor.remove(ACCESS_TOKEN);
         editor.remove(REFRESH_TOKEN);
+        editor.remove(EXPIRATION_TOKEN);
         editor.commit();
     }
 
@@ -34,9 +35,11 @@ public class SharedPreferencesCredentialStore implements CredentialStore {
     public boolean load(String arg0, Credential cred) throws IOException {
         String accessToken = prefs.getString(ACCESS_TOKEN, null);
         String refreshToken = prefs.getString(REFRESH_TOKEN, null);
+        long expirationTimeMilliseconds = prefs.getLong(EXPIRATION_TOKEN, 0);
         
         cred.setAccessToken(accessToken);
         cred.setRefreshToken(refreshToken);
+        cred.setExpirationTimeMilliseconds(Long.valueOf(expirationTimeMilliseconds));
         
         if (accessToken == null)
             return false;
