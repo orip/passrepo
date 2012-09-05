@@ -14,6 +14,7 @@ import com.example.passrepo.crypto.Encryption;
 import com.example.passrepo.crypto.Encryption.CipherText;
 import com.example.passrepo.crypto.PasswordHasher;
 import com.example.passrepo.crypto.PasswordHasher.ScryptParameters;
+import com.example.passrepo.drive.Constants;
 import com.example.passrepo.dummy.DummyContent;
 import com.example.passrepo.gdrive.GoogleDriveUtil;
 import com.example.passrepo.io.IO;
@@ -85,7 +86,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             File f = new File(new File("/mnt/sdcard"), PASSWORD_DATABASE_FILENAME);
             Files.write(IO.modelToEncryptedString(Model.currentModel), f, Charsets.UTF_8);
             Logger.i("IO", "saved model to disk");
-            new GoogleDriveUtil(this).create(f);
+            new GoogleDriveUtil(this).update(f, Constants.FILE_ID_TEMP);
             
             Logger.i("IO", "saved model to drive!!!");
         } catch (IOException e) {
