@@ -1,14 +1,16 @@
 package com.example.passrepo.drive;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Constants {
 
-	public static final String CONSUMER_KEY = "460678655526-9juprn2anqtqkg3l4u6ibt6p6ghrc7ug.apps.googleusercontent.com";
-	public static final String CONSUMER_SECRET= "05:19:B5:33:F7:3B:C3:5A:3F:37:62:5D:82:D3:B0:E5:0E:E1:47:A2";
-	
-	public static final String REQUEST_URL = "https://accounts.google.com/o/oauth2/token";
-	public static final String ACCESS_URL = "https://accounts.google.com/o/oauth2/token";
-	public static final String AUTHORIZE_URL = "https://accounts.google.com/o/oauth2/auth";
-	
-	public static final String	OAUTH_CALLBACK_URL		= "http://localhost";
+    static public final String CLIENT_ID = "962290543322.apps.googleusercontent.com";
+    static public final String CLIENT_SECRET = "McwLu2ChbXhVZd02c4C3SZg5";
+    static public final List<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/drive.file");
+    static public final String REDIRECT_URI = "http://localhost/oauth2callback";
+    
+    static public final String EXTRA_CREDENTIALS = "ExtraCredentials";
+    
 }
 

@@ -1,5 +1,6 @@
 package com.example.passrepo;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,9 +14,11 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.example.passrepo.drive.Constants;
 import com.example.passrepo.store.CredentialStore;
 import com.example.passrepo.store.SharedPreferencesCredentialStore;
 import com.example.passrepo.util.QueryStringParser;
+import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
@@ -26,12 +29,6 @@ import com.google.api.client.json.jackson.JacksonFactory;
 
 public class GoogleAuthenticationActivity extends Activity {
 
-    static private final String CLIENT_ID = "962290543322.apps.googleusercontent.com";
-    static private final String CLIENT_SECRET = "McwLu2ChbXhVZd02c4C3SZg5";
-    static private final List<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/drive.file");
-    static private final String REDIRECT_URI = "http://localhost/oauth2callback";
-    
-    GoogleAuthorizationCodeFlow flow;
     boolean m_isFinishedRedirect = false;
     SharedPreferences prefs;
 
@@ -59,13 +56,12 @@ public class GoogleAuthenticationActivity extends Activity {
         
     public synchronized void tryAuth() {
         HttpTransport ht = new NetHttpTransport();
-        JacksonFactory jsonF = new JacksonFactory();
-        
-        flow = new GoogleAuthorizationCodeFlow.Builder(
-                ht, jsonF, CLIENT_ID, CLIENT_SECRET, SCOPES).build();
+        JacksonFactory jsonF = new JacksonFactory();        
+        final GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+                ht, jsonF, Constants.CLIENT_ID, Constants.CLIENT_SECRET, Constants.SCOPES).build();
         
         // TODO already logged in?
-        GoogleAuthorizationCodeRequestUrl urlBuilder = flow.newAuthorizationUrl().setRedirectUri(REDIRECT_URI);
+        GoogleAuthorizationCodeRequestUrl urlBuilder = flow.newAuthorizationUrl().setRedirectUri(Constants.REDIRECT_URI);
         
         WebView webview = new WebView(this);
         webview.getSettings().setJavaScriptEnabled(true);  
@@ -104,7 +100,7 @@ public class GoogleAuthenticationActivity extends Activity {
                 String authorizationCode = extractParamFromUrl(url, "code");
                 
                 GoogleAuthorizationCodeTokenRequest tokenRequest =
-                        flow.newTokenRequest(authorizationCode).setRedirectUri(REDIRECT_URI);
+                        flow.newTokenRequest(authorizationCode).setRedirectUri(Constants.REDIRECT_URI);
                 
                 NetworkRunnable nr = new NetworkRunnable(tokenRequest);
                 
@@ -125,8 +121,12 @@ public class GoogleAuthenticationActivity extends Activity {
                 System.out.println("accessToken=" + accessToken);
                 System.out.println("refreshToken=" + refreshToken);
                 
-                CredentialStore credentialStore = new SharedPreferencesCredentialStore(prefs);
-                credentialStore.write(new String[] {accessToken, refreshToken});
+                Credential credential = null;
+                try {
+                    credential = flow.createAndStoreCredential(gtk, null);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 
                 finish();
             }

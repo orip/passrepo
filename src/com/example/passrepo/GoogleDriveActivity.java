@@ -16,18 +16,18 @@ import com.example.passrepo.store.CredentialStore;
 import com.example.passrepo.store.SharedPreferencesCredentialStore;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
 
-public class MainActivity extends Activity {
+public class GoogleDriveActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
-        ((TextView)findViewById(R.id.foo)).setText(Base64.encodeToString(PasswordHasher.hash("foo"), Base64.NO_WRAP));
     }
 
     @Override
@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-
+        
         HttpTransport ht = new NetHttpTransport();
         JacksonFactory jsonF = new JacksonFactory();        
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
@@ -52,13 +52,8 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
         
-        if (cred == null) {
-            System.out.println("Access Token isn't saved yet, starting Google Authentication process..");
-            startActivity(new Intent().setClass(getApplicationContext(),GoogleAuthenticationActivity.class));
-        } else {
-            setTitle("Logged-in! Start using Drive!");
-            System.out.println("Logged-in accessToken=" + cred.getAccessToken());
-            startActivity(new Intent().setClass(getApplicationContext(),GoogleDriveActivity.class));
-        }
+        Drive service = new Drive.Builder(ht, jsonF, cred);
+        
+        ((TextView)findViewById(R.id.foo)).setText(Base64.encodeToString(PasswordHasher.hash("foo"), Base64.NO_WRAP));
     }
 }
