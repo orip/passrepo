@@ -8,8 +8,8 @@ import com.google.common.collect.Maps;
 
 public class Model {
     public List<PasswordEntry> passwordEntries;
-    public byte[] key;
-    public ScryptParameters scryptParameters;
+    public transient byte[] key;
+    public transient ScryptParameters scryptParameters;
     
     private Map<String, PasswordEntry> idsToPasswordEntriesMap;
 
