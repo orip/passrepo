@@ -31,13 +31,6 @@
         </activity>
 
         <activity
-            android:name=".GoogleDriveActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />                
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".PasswordEntryDetailActivity"
             android:label="@string/title_passwordentry_detail" >
             <meta-data
