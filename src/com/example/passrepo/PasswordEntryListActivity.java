@@ -81,14 +81,14 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     public void onItemSelected(String id) {
         if (mTwoPane) {
             Bundle arguments = new Bundle();
-            arguments.putString(PasswordEntryDetailFragment.ARG_ITEM_ID, id);
+            arguments.putString(Consts.ARG_ITEM_ID, id);
             PasswordEntryDetailFragment fragment = new PasswordEntryDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction().replace(R.id.passwordentry_detail_container, fragment).commit();
 
         } else {
             Intent detailIntent = new Intent(this, PasswordEntryDetailActivity.class);
-            detailIntent.putExtra(PasswordEntryDetailFragment.ARG_ITEM_ID, id);
+            detailIntent.putExtra(Consts.ARG_ITEM_ID, id);
             startActivity(detailIntent);
         }
     }

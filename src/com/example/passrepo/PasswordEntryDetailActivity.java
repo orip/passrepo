@@ -17,8 +17,8 @@ public class PasswordEntryDetailActivity extends FragmentActivity {
 
         if (savedInstanceState == null) {
             Bundle arguments = new Bundle();
-            arguments.putString(PasswordEntryDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(PasswordEntryDetailFragment.ARG_ITEM_ID));
+            arguments.putString(Consts.ARG_ITEM_ID,
+                    getIntent().getStringExtra(Consts.ARG_ITEM_ID));
             PasswordEntryDetailFragment fragment = new PasswordEntryDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
