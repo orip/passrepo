@@ -5,20 +5,13 @@ import java.io.IOException;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.view.Menu;
 import android.widget.TextView;
 
 import com.example.passrepo.crypto.PasswordHasher;
-import com.example.passrepo.drive.Constants;
-import com.example.passrepo.store.CredentialStore;
 import com.example.passrepo.store.SharedPreferencesCredentialStore;
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson.JacksonFactory;
 
 public class MainActivity extends Activity {
 
@@ -28,6 +21,14 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         
         ((TextView)findViewById(R.id.foo)).setText(Base64.encodeToString(PasswordHasher.hash("foo"), Base64.NO_WRAP));
+        /*
+        try {
+            new SharedPreferencesCredentialStore(this).delete(null, null);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        */
     }
 
     @Override
@@ -42,7 +43,7 @@ public class MainActivity extends Activity {
 
         Credential cred = null;
         try {
-            cred = PassRepoGoogleAuthorizationCodeFlow.getInstance().loadCredential(null);
+            cred = PassRepoGoogleAuthorizationCodeFlow.getInstance(this).loadCredential("");
         } catch(IOException e) {
             e.printStackTrace();
         }

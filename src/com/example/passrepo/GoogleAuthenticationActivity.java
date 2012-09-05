@@ -1,8 +1,6 @@
 package com.example.passrepo;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -15,17 +13,12 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.example.passrepo.drive.Constants;
-import com.example.passrepo.store.CredentialStore;
-import com.example.passrepo.store.SharedPreferencesCredentialStore;
 import com.example.passrepo.util.QueryStringParser;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson.JacksonFactory;
 
 public class GoogleAuthenticationActivity extends Activity {
 
@@ -55,7 +48,7 @@ public class GoogleAuthenticationActivity extends Activity {
     }
         
     public synchronized void tryAuth() {
-        final GoogleAuthorizationCodeFlow flow = PassRepoGoogleAuthorizationCodeFlow.getInstance();
+        final GoogleAuthorizationCodeFlow flow = PassRepoGoogleAuthorizationCodeFlow.getInstance(this);
         
         // TODO already logged in?
         GoogleAuthorizationCodeRequestUrl urlBuilder = flow.newAuthorizationUrl().setRedirectUri(Constants.REDIRECT_URI);
@@ -115,7 +108,7 @@ public class GoogleAuthenticationActivity extends Activity {
                 
                 Credential credential = null;
                 try {
-                    credential = flow.createAndStoreCredential(gtk, null);
+                    credential = flow.createAndStoreCredential(gtk, "");
                     
                     System.out.println("Finished storing credentials! Going back!");
                     
