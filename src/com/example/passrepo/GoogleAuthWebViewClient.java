@@ -28,7 +28,7 @@ public class GoogleAuthWebViewClient extends WebViewClient {
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        Logger.i("GoogleAuthWebView", "page started: " + url);
+        System.out.println("page started: " + url);
         super.onPageStarted(view, url, favicon);
     }            
     
