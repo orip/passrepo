@@ -22,9 +22,9 @@ public class MainActivity extends Activity {
         DerivedKey derivedKey = PasswordHasher.hash("foo");
         CipherText encrypted = Encryption.encrypt("What's up man?".getBytes(Charsets.UTF_8), derivedKey.bytes);
         String decrypted = new String(Encryption.decrypt(encrypted, derivedKey.bytes), Charsets.UTF_8);
-        Logger.i(TAG, "derivedKey=", Base64.encodeToString(derivedKey.bytes, Base64.NO_WRAP));
-        Logger.i(TAG, "encrypted=", Base64.encodeToString(encrypted.bytes, Base64.NO_WRAP));
-        Logger.i(TAG, "decrypted=", decrypted);
+        Logger.i(TAG, "derivedKey=%s", Base64.encodeToString(derivedKey.bytes, Base64.NO_WRAP));
+        Logger.i(TAG, "encrypted=%s", Base64.encodeToString(encrypted.bytes, Base64.NO_WRAP));
+        Logger.i(TAG, "decrypted=%s", decrypted);
     }
 
     @Override
