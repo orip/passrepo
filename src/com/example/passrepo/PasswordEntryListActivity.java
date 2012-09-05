@@ -102,9 +102,13 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
         getSupportFragmentManager().beginTransaction().replace(fragmentId, fragment).commit();
     }
 
+    private String getItemIdFromIntent(Intent intent) {
+        return Preconditions.checkNotNull(intent.getExtras().getString(Consts.ARG_ITEM_ID));
+    }
+
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         Intent intent = getIntent();
         if (intent != null) {
             if (Consts.EDIT_ACTION.equals(intent.getAction())) {
@@ -113,15 +117,6 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
                 switchDetailFragment(getItemIdFromIntent(intent), R.layout.fragment_passwordentry_detail);
             }
         }
-    }
-
-    private String getItemIdFromIntent(Intent intent) {
-        return Preconditions.checkNotNull(intent.getExtras().getString(Consts.ARG_ITEM_ID));
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         GoogleDriveUtil.authorize(this);
     }
 
