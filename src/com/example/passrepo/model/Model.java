@@ -32,4 +32,6 @@ public class Model {
     public PasswordEntry getPasswordEntry(String id) {
         return idsToPasswordEntriesMap.get(id);
     }
+    
+    public static Model currentModel = null;
 }

@@ -9,11 +9,12 @@ import com.example.passrepo.model.PasswordEntry;
 import com.google.common.collect.Lists;
 
 public class DummyContent {
+    public static byte[] dummyKey;
     public static Model model;
 
     static {
         ScryptParameters scryptParameters = new ScryptParameters();
-        byte[] key = PasswordHasher.hash("foo", scryptParameters);
+        dummyKey = PasswordHasher.hash("foo", scryptParameters);
 
         List<PasswordEntry> passwordEntries = Lists.newArrayList(
         new PasswordEntry("foo", "foo_user", "foo_pass"),
@@ -23,6 +24,6 @@ public class DummyContent {
         new PasswordEntry("yyy", "yyy_user", "yyy_pass"),
         new PasswordEntry("zzz", "zzz_user", "zzz_pass"));
         
-        model = new Model(key, scryptParameters, passwordEntries);
+        model = new Model(dummyKey, scryptParameters, passwordEntries);
     }
 }

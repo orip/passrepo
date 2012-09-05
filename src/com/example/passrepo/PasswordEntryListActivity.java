@@ -1,5 +1,9 @@
 package com.example.passrepo;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -15,8 +19,12 @@ import com.example.passrepo.model.Model;
 import com.example.passrepo.util.GsonHelper;
 import com.example.passrepo.util.Logger;
 import com.google.common.base.Charsets;
+import com.google.common.io.CharStreams;
+import com.google.common.io.InputSupplier;
+import com.google.common.io.OutputSupplier;
 
 public class PasswordEntryListActivity extends FragmentActivity implements PasswordEntryListFragment.Callbacks {
+    private static final String PASSWORD_DATABASE_FILENAME = "passwordDatabase";
     private boolean mTwoPane;
 
     @Override
@@ -28,6 +36,40 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             mTwoPane = true;
             ((PasswordEntryListFragment) getSupportFragmentManager().findFragmentById(R.id.passwordentry_list))
                     .setActivateOnItemClick(true);
+        }
+        
+        loadModel();
+    }
+
+    private void loadModel() {
+        if (Model.currentModel == null) {
+            Logger.i("IO", "loading model");
+            try {
+                String fileContents = CharStreams.toString(new InputSupplier<InputStreamReader>() {
+                    public InputStreamReader getInput() throws IOException {
+                        return new InputStreamReader(openFileInput(PASSWORD_DATABASE_FILENAME), Charsets.UTF_8);
+                    }
+                });
+                Model.currentModel = IO.modelFromEncryptedString(fileContents, DummyContent.dummyKey);
+                Logger.i("IO", "sucessfully loaded model from disk");
+            } catch (IOException e) {
+                Model.currentModel = DummyContent.model;
+                Logger.i("IO", "loaded dummy model");
+            }
+        }
+    }
+    
+    private void saveModel() {
+        try {
+            CharStreams.write(IO.modelToEncryptedString(Model.currentModel), new OutputSupplier<OutputStreamWriter>() {
+                public OutputStreamWriter getOutput() throws IOException {
+                    return new OutputStreamWriter(openFileOutput(PASSWORD_DATABASE_FILENAME, MODE_PRIVATE));
+                }
+            });
+            Logger.i("IO", "saved model to disk");
+        } catch (IOException e) {
+            Logger.i("IO", "error saving model to disk");
+            throw new RuntimeException(e);
         }
     }
 
@@ -50,11 +92,17 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     @Override
     protected void onResume() {
         super.onResume();
-        testDriveEncyrption();
+        testDriveEncryption();
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveModel();
     }
 
     @SuppressWarnings("unused")
-    private void testDriveEncyrption() {
+    private void testDriveEncryption() {
         String encryptedString = IO.modelToEncryptedString(DummyContent.model);
         Model decryptedModel = IO.modelFromEncryptedString(encryptedString, DummyContent.model.key);
         Logger.i("TEST", "originalModel=%s", GsonHelper.customGson.toJson(DummyContent.model));
