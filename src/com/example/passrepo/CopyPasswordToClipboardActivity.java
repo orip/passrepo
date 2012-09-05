@@ -10,6 +10,7 @@ import android.widget.Toast;
 public class CopyPasswordToClipboardActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         clipboard.setPrimaryClip(ClipData.newPlainText("simple text", "Hello, World!"));
         Toast.makeText(this, "Copied password to clipboard", Toast.LENGTH_LONG).show();
