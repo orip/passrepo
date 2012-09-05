@@ -46,9 +46,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             mTwoPane = true;
             ((PasswordEntryListFragment) getSupportFragmentManager().findFragmentById(R.id.passwordentry_list))
                     .setActivateOnItemClick(true);
-        }
-        
-        loadModel();
+        }        
     }
 
     private void loadModel() {
@@ -115,6 +113,9 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     protected void onResume() {
         super.onResume();
         testDriveEncryption();
+        
+
+        loadModel();
     }
     
     @Override
