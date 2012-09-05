@@ -1,8 +1,9 @@
 package com.example.passrepo;
 
 import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
@@ -63,6 +64,12 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
         super.onResume();
         Logger.i("bla", "onResume");
         //GoogleDriveUtil.authorize(this);
+    }
+    
+    @Override
+    protected void onStop() {
+        super.onStop();
+        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancel(Consts.COPY_PASSWORD_NOTIFICATION_ID);
     }
 
     @SuppressWarnings("unused")

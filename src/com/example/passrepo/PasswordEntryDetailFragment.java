@@ -47,14 +47,7 @@ public class PasswordEntryDetailFragment extends PasswordEntryDetailFragmentBase
                 .build();
         getNotificationManager().notify(Consts.COPY_PASSWORD_NOTIFICATION_ID, notification);
     }
-
-    @Override
-    public void onPause() {
-        Logger.i("bla", "detail view onPause");
-        super.onPause();
-        getNotificationManager().cancel(Consts.COPY_PASSWORD_NOTIFICATION_ID);
-    }
-
+    
     private NotificationManager getNotificationManager() {
         return (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
     }
