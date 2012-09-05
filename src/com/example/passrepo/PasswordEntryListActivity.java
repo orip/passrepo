@@ -34,7 +34,8 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
 
         testDriveEncryption();
 
-        IO.loadModel(this);
+        if (Model.currentModel == null)
+            IO.loadModel(this);
     }
 
     @Override
@@ -76,12 +77,6 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             }
         }
         GoogleDriveUtil.authorize(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        IO.saveModel(this);
     }
 
     @SuppressWarnings("unused")
