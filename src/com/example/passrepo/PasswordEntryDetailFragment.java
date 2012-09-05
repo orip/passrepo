@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.passrepo.dummy.DummyContent;
@@ -21,11 +21,11 @@ public class PasswordEntryDetailFragment extends Fragment {
 
     PasswordEntry mItem;
 
-    private EditText title;
+    private TextView title;
 
-    private EditText password;
+    private TextView password;
 
-    private EditText userName;
+    private TextView userName;
 
     public PasswordEntryDetailFragment() {
     }
@@ -38,7 +38,9 @@ public class PasswordEntryDetailFragment extends Fragment {
     }
 
     private void switchToEditMode() {
-        getActivity().startActivity(new Intent(getActivity(), getActivity().getClass()).setAction(Consts.EDIT_ACTION).putExtra(Consts.ARG_ITEM_ID, mItem.id));
+        getActivity().startActivity(
+                new Intent(getActivity(), getActivity().getClass()).setAction(Consts.EDIT_ACTION).putExtra(Consts.ARG_ITEM_ID,
+                        mItem.id));
     }
 
     @Override
@@ -47,9 +49,9 @@ public class PasswordEntryDetailFragment extends Fragment {
         Preconditions.checkState(mItem != null);
 
         View rootView = inflater.inflate(R.layout.fragment_passwordentry_detail, container, false);
-        title = (EditText) rootView.findViewById(R.id.title);
-        userName = (EditText) rootView.findViewById(R.id.userName);
-        password = (EditText) rootView.findViewById(R.id.password);
+        title = (TextView) rootView.findViewById(R.id.title);
+        userName = (TextView) rootView.findViewById(R.id.userName);
+        password = (TextView) rootView.findViewById(R.id.password);
         title.setText(mItem.title);
         userName.setText(mItem.userName);
         password.setText(mItem.password);
