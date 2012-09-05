@@ -91,6 +91,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
         }
     }
 
+    // TODO: duplicating code in PasswordEntryDetailActivity
     private void switchDetailFragment(String id, int fragmentId) {
         Bundle arguments = new Bundle();
         arguments.putString(Consts.ARG_ITEM_ID, id);
