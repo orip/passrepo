@@ -1,16 +1,16 @@
 package com.example.passrepo.gdrive;
 
 import java.io.IOException;
-import java.util.Date;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.util.Date;
 
 import android.content.Context;
 import android.content.Intent;
 
 import com.example.passrepo.GoogleAuthActivity;
 import com.example.passrepo.PassRepoGoogleAuthorizationCodeFlow;
+import com.example.passrepo.drive.Constants;
 import com.example.passrepo.store.SharedPreferencesCredentialStore;
 import com.example.passrepo.util.Logger;
 import com.google.api.client.auth.oauth2.Credential;
@@ -22,7 +22,6 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.Drive.Files;
-import com.google.api.services.drive.Drive.Files.List;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.common.io.CharStreams;
@@ -80,6 +79,13 @@ public class GoogleDriveUtil {
                 }
                 System.out.println("id: " + r.getId());
                 
+                try {
+                    File f = drive.files().get(r.getId()).execute();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                
                 System.out.println("Success!");
             }
         };
@@ -90,12 +96,12 @@ public class GoogleDriveUtil {
     private String result;
     public String download() {
         System.out.println("Downloading file...");
-        authorize();
+        //authorize();
     
         Runnable r = new Runnable() {
             public void run() {                
                 try {
-                    String fileId = null;
+                    String fileId = Constants.FILE_ID_TEMP;
                     Files.List request = drive.files().list();
 
                     boolean success = false;
@@ -161,6 +167,13 @@ public class GoogleDriveUtil {
             throw new RuntimeException(e);
         }
     }
+    
+    public void authorizeIfNecessary() {
+        if (!isAuthorized()) {
+            authorize();
+        }
+    }
+    
     
     public void authorize() {
         Logger.i("gdrive", "Access Token isn't saved yet, starting Google Authentication process..");
