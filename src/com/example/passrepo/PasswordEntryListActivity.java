@@ -12,9 +12,9 @@ import com.example.passrepo.crypto.PasswordHasher.ScryptParameters;
 import com.example.passrepo.dummy.DummyContent;
 import com.example.passrepo.io.IO;
 import com.example.passrepo.model.Model;
+import com.example.passrepo.util.GsonHelper;
 import com.example.passrepo.util.Logger;
 import com.google.common.base.Charsets;
-import com.google.gson.Gson;
 
 public class PasswordEntryListActivity extends FragmentActivity implements PasswordEntryListFragment.Callbacks {
     private boolean mTwoPane;
@@ -55,12 +55,11 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
 
     @SuppressWarnings("unused")
     private void testDriveEncyrption() {
-        Gson gson = new Gson();
         String encryptedString = IO.modelToEncryptedString(DummyContent.model);
         Model decryptedModel = IO.modelFromEncryptedString(encryptedString, DummyContent.model.key);
-        Logger.i("TEST", "originalModel=%s", gson.toJson(DummyContent.model));
+        Logger.i("TEST", "originalModel=%s", GsonHelper.customGson.toJson(DummyContent.model));
         Logger.i("TEST", "encryptedString=%s", encryptedString);
-        Logger.i("TEST", "decryptedModel=%s", gson.toJson(decryptedModel));
+        Logger.i("TEST", "decryptedModel=%s", GsonHelper.customGson.toJson(decryptedModel));
 
         if (false) {
             ScryptParameters scryptParameters = new ScryptParameters();
