@@ -52,7 +52,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     protected void onResume() {
         super.onResume();
         Logger.i("bla", "onResume");
-        GoogleDriveUtil.authorize(this);
+        //GoogleDriveUtil.authorize(this);
     }
 
     @SuppressWarnings("unused")
