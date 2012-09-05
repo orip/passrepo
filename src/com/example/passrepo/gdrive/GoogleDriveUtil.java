@@ -56,7 +56,8 @@ public class GoogleDriveUtil {
     
     final String FILENAME = "PassRepoStorage";
     
-    public void upload(final java.io.File file) {        
+    public void upload(final java.io.File file) {
+        //authorize();
         System.out.println("Uploading file...");
         
         Runnable r = new Runnable() {
@@ -69,13 +70,14 @@ public class GoogleDriveUtil {
                 
                 FileContent content = new FileContent("application/json", file);
                 
-                //File result = null;
+                File r = null;
                 try {
                     // TODO if file exists, update 
-                    drive.files().insert(driveMetaData, content).execute();
+                    r = drive.files().insert(driveMetaData, content).execute();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+                System.out.println("id: " + r.getId());
                 
                 System.out.println("Success!");
             }
