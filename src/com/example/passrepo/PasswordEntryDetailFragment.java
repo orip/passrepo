@@ -40,7 +40,7 @@ public class PasswordEntryDetailFragment extends Fragment {
     private void switchToEditMode() {
         getActivity().startActivity(
                 new Intent(getActivity(), getActivity().getClass()).setAction(Consts.EDIT_ACTION).putExtra(Consts.ARG_ITEM_ID,
-                        mItem.id));
+                        mItem.id).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
     }
 
     @Override
