@@ -17,6 +17,7 @@ import com.example.passrepo.util.Logger;
 import com.google.common.base.Preconditions;
 
 public class PasswordEntryDetailFragment extends Fragment {
+    // TODO: similar to PasswordEntryDetailEditFragment, extract common base class
 
     PasswordEntry mItem;
 
@@ -37,7 +38,7 @@ public class PasswordEntryDetailFragment extends Fragment {
     }
 
     private void switchToEditMode() {
-        getActivity().startActivity(new Intent(getActivity(), getActivity().getClass()).setAction(Consts.EDIT_ACTION));
+        getActivity().startActivity(new Intent(getActivity(), getActivity().getClass()).setAction(Consts.EDIT_ACTION).putExtra(Consts.ITEM_ID_EXTRA, mItem.id));
     }
 
     @Override

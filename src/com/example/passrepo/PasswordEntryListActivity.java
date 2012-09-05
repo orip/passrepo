@@ -21,6 +21,7 @@ import com.example.passrepo.model.Model;
 import com.example.passrepo.util.GsonHelper;
 import com.example.passrepo.util.Logger;
 import com.google.common.base.Charsets;
+import com.google.common.base.Preconditions;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
@@ -40,7 +41,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             ((PasswordEntryListFragment) getSupportFragmentManager().findFragmentById(R.id.passwordentry_list))
                     .setActivateOnItemClick(true);
         }
-        
+
         loadModel();
     }
 
@@ -61,7 +62,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             }
         }
     }
-    
+
     private void saveModel() {
         try {
             CharStreams.write(IO.modelToEncryptedString(Model.currentModel), new OutputSupplier<OutputStreamWriter>() {
@@ -69,7 +70,8 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
                     return new OutputStreamWriter(openFileOutput(PASSWORD_DATABASE_FILENAME, MODE_PRIVATE));
                 }
             });
-            Files.write(IO.modelToEncryptedString(Model.currentModel), new File(new File("/mnt/sdcard"), PASSWORD_DATABASE_FILENAME), Charsets.UTF_8);
+            Files.write(IO.modelToEncryptedString(Model.currentModel), new File(new File("/mnt/sdcard"),
+                    PASSWORD_DATABASE_FILENAME), Charsets.UTF_8);
             Logger.i("IO", "saved model to disk");
         } catch (IOException e) {
             Logger.i("IO", "error saving model to disk");
@@ -80,17 +82,38 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     @Override
     public void onItemSelected(String id) {
         if (mTwoPane) {
-            Bundle arguments = new Bundle();
-            arguments.putString(Consts.ARG_ITEM_ID, id);
-            PasswordEntryDetailFragment fragment = new PasswordEntryDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction().replace(R.id.passwordentry_detail_container, fragment).commit();
-
+            int fragmentId = R.id.passwordentry_detail_container;
+            switchDetailFragment(id, fragmentId);
         } else {
             Intent detailIntent = new Intent(this, PasswordEntryDetailActivity.class);
             detailIntent.putExtra(Consts.ARG_ITEM_ID, id);
             startActivity(detailIntent);
         }
+    }
+
+    private void switchDetailFragment(String id, int fragmentId) {
+        Bundle arguments = new Bundle();
+        arguments.putString(Consts.ARG_ITEM_ID, id);
+        PasswordEntryDetailFragment fragment = new PasswordEntryDetailFragment();
+        fragment.setArguments(arguments);
+        getSupportFragmentManager().beginTransaction().replace(fragmentId, fragment).commit();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = getIntent();
+        if (intent != null) {
+            if (Consts.EDIT_ACTION.equals(intent.getAction())) {
+                switchDetailFragment(getItemIdFromIntent(intent), R.layout.fragment_passwordentry_detail_edit);
+            } else if (Consts.VIEW_ACTION.equals(intent.getAction())) {
+                switchDetailFragment(getItemIdFromIntent(intent), R.layout.fragment_passwordentry_detail);
+            }
+        }
+    }
+
+    private String getItemIdFromIntent(Intent intent) {
+        return Preconditions.checkNotNull(intent.getExtras().getString(Consts.ITEM_ID_EXTRA));
     }
 
     @Override
@@ -99,7 +122,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
         testDriveEncryption();
         GoogleDriveUtil.authorize(this);
     }
-    
+
     @Override
     protected void onPause() {
         super.onPause();
