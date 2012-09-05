@@ -18,6 +18,8 @@ public class Encryption {
             this.iv = iv;
         }
     }
+    
+    // TODO: add HMAC
 
     public static CipherText encrypt(byte[] plainText, byte[] key) {
         try {
