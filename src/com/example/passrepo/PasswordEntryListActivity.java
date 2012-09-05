@@ -69,8 +69,12 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
                     return new OutputStreamWriter(openFileOutput(PASSWORD_DATABASE_FILENAME, MODE_PRIVATE));
                 }
             });
-            Files.write(IO.modelToEncryptedString(Model.currentModel), new File(new File("/mnt/sdcard"), PASSWORD_DATABASE_FILENAME), Charsets.UTF_8);
+            File f = new File(new File("/mnt/sdcard"), PASSWORD_DATABASE_FILENAME);
+            Files.write(IO.modelToEncryptedString(Model.currentModel), f, Charsets.UTF_8);
             Logger.i("IO", "saved model to disk");
+            new GoogleDriveUtil(this).upload(f);            
+            
+            Logger.i("IO", "saved model to drive!!!");
         } catch (IOException e) {
             Logger.i("IO", "error saving model to disk");
             throw new RuntimeException(e);
@@ -97,7 +101,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     protected void onResume() {
         super.onResume();
         testDriveEncryption();
-        GoogleDriveUtil.authorize(this);
+        new GoogleDriveUtil(this).authorize();
     }
     
     @Override
