@@ -24,7 +24,7 @@ import com.google.common.io.InputSupplier;
 import com.google.common.io.OutputSupplier;
 
 public class PasswordEntryListActivity extends FragmentActivity implements PasswordEntryListFragment.Callbacks {
-    private static final String PASSWORD_DATABASE_FILENAME = "passwordDatabase";
+    private static final String PASSWORD_DATABASE_FILENAME = "password_database.json";
     private boolean mTwoPane;
 
     @Override
