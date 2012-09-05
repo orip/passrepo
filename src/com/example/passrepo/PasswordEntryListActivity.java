@@ -29,10 +29,16 @@ import com.google.common.io.OutputSupplier;
 public class PasswordEntryListActivity extends FragmentActivity implements PasswordEntryListFragment.Callbacks {
     private static final String PASSWORD_DATABASE_FILENAME = "password_database.json";
     private boolean mTwoPane;
+    
+    private GoogleDriveUtil googleDriveUtil;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        googleDriveUtil = new GoogleDriveUtil(this);
+        googleDriveUtil.authorize();
+        
         setContentView(R.layout.activity_passwordentry_list);
 
         if (findViewById(R.id.passwordentry_detail_container) != null) {
@@ -105,13 +111,13 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     protected void onResume() {
         super.onResume();
         testDriveEncryption();
-        new GoogleDriveUtil(this).authorize();
     }
     
     @Override
     protected void onPause() {
         super.onPause();
-        saveModel();
+        if (googleDriveUtil.isAuthorized())
+            saveModel();
     }
 
     @SuppressWarnings("unused")
