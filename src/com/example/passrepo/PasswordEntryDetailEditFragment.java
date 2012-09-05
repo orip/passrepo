@@ -10,8 +10,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.passrepo.io.IO;
-import com.example.passrepo.util.Logger;
-import com.google.common.base.Preconditions;
 
 public class PasswordEntryDetailEditFragment extends PasswordEntryDetailFragmentBase {
     public PasswordEntryDetailEditFragment() {
@@ -30,10 +28,8 @@ public class PasswordEntryDetailEditFragment extends PasswordEntryDetailFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Logger.i("PasswordEntryDetailFragment", "mItem=%s", mItem);
-        Preconditions.checkState(mItem != null);
-
         View rootView = inflater.inflate(R.layout.fragment_passwordentry_detail_edit, container, false);
+        updateRootView(rootView);
 
         ((Button) rootView.findViewById(R.id.cancel_button)).setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
