@@ -22,10 +22,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
-            android:label="foobar" >
-        </activity>
-        <activity
             android:name=".GoogleAuthenticationActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />                

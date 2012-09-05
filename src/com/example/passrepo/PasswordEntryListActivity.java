@@ -15,6 +15,7 @@ import com.example.passrepo.crypto.Encryption.CipherText;
 import com.example.passrepo.crypto.PasswordHasher;
 import com.example.passrepo.crypto.PasswordHasher.ScryptParameters;
 import com.example.passrepo.dummy.DummyContent;
+import com.example.passrepo.gdrive.GoogleDriveUtil;
 import com.example.passrepo.io.IO;
 import com.example.passrepo.model.Model;
 import com.example.passrepo.util.GsonHelper;
@@ -96,6 +97,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     protected void onResume() {
         super.onResume();
         testDriveEncryption();
+        GoogleDriveUtil.authorize(this);
     }
     
     @Override
