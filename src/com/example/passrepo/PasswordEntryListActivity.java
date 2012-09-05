@@ -83,8 +83,8 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     @Override
     protected void onPause() {
         super.onPause();
-        if (googleDriveUtil.isAuthorized())
-            IO.saveModel(this);
+        //if (googleDriveUtil.isAuthorized())
+        //    IO.saveModel(this);
     }
 
     @SuppressWarnings("unused")
