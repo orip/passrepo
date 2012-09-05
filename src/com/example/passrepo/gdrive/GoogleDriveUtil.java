@@ -1,12 +1,14 @@
 package com.example.passrepo.gdrive;
 
 import java.io.IOException;
+import java.util.Date;
 
 import android.content.Context;
 import android.content.Intent;
 
 import com.example.passrepo.GoogleAuthActivity;
 import com.example.passrepo.PassRepoGoogleAuthorizationCodeFlow;
+import com.example.passrepo.store.SharedPreferencesCredentialStore;
 import com.example.passrepo.util.Logger;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
@@ -16,8 +18,6 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 
 public class GoogleDriveUtil {
     
@@ -99,16 +99,29 @@ public class GoogleDriveUtil {
     }    
     
     public void authorize() {
-        Credential cred = null;
+        Logger.i("gdrive", "Access Token isn't saved yet, starting Google Authentication process..");
+        context.startActivity(new Intent(context.getApplicationContext(), GoogleAuthActivity.class));
+    }
+    
+    public boolean isAuthorized() {
         try {
-            cred = PassRepoGoogleAuthorizationCodeFlow.getInstance(context.getApplicationContext()).loadCredential("");
+            Credential cred = PassRepoGoogleAuthorizationCodeFlow.getInstance(context.getApplicationContext()).loadCredential("");
+            
+            if (cred == null || cred.getAccessToken() == null) {
+                Logger.i("gdrive", "Credentials don't exist");
+                return false;
+            }
+            
+            // Credentials are expired.
+            if (cred.getExpirationTimeMilliseconds() < new Date().getTime()) {
+                Logger.i("gdrive", "Credentials have expired, considered unauthorized");
+                return false;
+            }
+            
+            return true;
+            
         } catch(IOException e) {
             throw new RuntimeException(e);
-        }
-        
-        if (cred == null) {
-            Logger.i("gdrive", "Access Token isn't saved yet, starting Google Authentication process..");
-            context.startActivity(new Intent().setClass(context.getApplicationContext(), GoogleAuthActivity.class));
-        }
+        }   
     }
 }

@@ -22,6 +22,7 @@ public class GoogleAuthWebViewClient extends WebViewClient {
     
     public GoogleAuthWebViewClient(GoogleAuthorizationCodeFlow flow, GoogleAuthWebViewClientCallback callback) {
         this.flow = flow;
+        this.callback = callback;
         this.isFinishedRedirect = false;
     }        
 
