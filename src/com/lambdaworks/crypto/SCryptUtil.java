@@ -2,11 +2,12 @@
 
 package com.lambdaworks.crypto;
 
+import static com.lambdaworks.codec.Base64.decode;
+import static com.lambdaworks.codec.Base64.encode;
+
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
-
-import static com.lambdaworks.codec.Base64.*;
 
 /**
  * Simple {@link SCrypt} interface for hashing passwords using the

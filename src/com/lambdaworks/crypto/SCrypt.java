@@ -2,14 +2,16 @@
 
 package com.lambdaworks.crypto;
 
-import com.lambdaworks.jni.*;
+import static java.lang.Integer.MAX_VALUE;
+import static java.lang.System.arraycopy;
+
+import java.security.GeneralSecurityException;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.GeneralSecurityException;
 
-import static java.lang.Integer.MAX_VALUE;
-import static java.lang.System.arraycopy;
+import com.lambdaworks.jni.LibraryLoader;
+import com.lambdaworks.jni.LibraryLoaders;
 
 /**
  * An implementation of the <a href="http://www.tarsnap.com/scrypt/scrypt.pdf"/>scrypt</a>

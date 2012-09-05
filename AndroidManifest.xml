@@ -3,6 +3,8 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="15" />
@@ -14,12 +16,26 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
+            
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                
+                
 
-                <category android:name="android.intent.category.LAUNCHER" />
+				<category android:name="android.intent.category.LAUNCHER" />
+                
             </intent-filter>
         </activity>
-    </application>
+        <activity
+            android:name=".OAuthAccessTokenActivity"
+            android:launchMode="singleTask" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />                
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+        </activity>
+        </application>
 
 </manifest>

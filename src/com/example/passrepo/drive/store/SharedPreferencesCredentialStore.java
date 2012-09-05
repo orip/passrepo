@@ -1,4 +1,4 @@
-package com.ecs.sample.store;
+package com.example.passrepo.drive.store;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;

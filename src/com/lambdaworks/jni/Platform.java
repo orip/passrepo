@@ -2,10 +2,10 @@
 
 package com.lambdaworks.jni;
 
-import java.util.regex.Pattern;
-
 import static java.lang.System.getProperty;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
+
+import java.util.regex.Pattern;
 
 /**
  * A platform is a unique combination of CPU architecture and operating system. This class
