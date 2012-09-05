@@ -22,9 +22,9 @@ public class Model {
     }
 
     private void populateIdsToPasswordEntriesMap(List<PasswordEntry> passwordEntries) {
-        long counter = 0;
+        long index = 0;
         for (PasswordEntry passwordEntry : passwordEntries) {
-            passwordEntry.id = Long.toString(counter++);
+            passwordEntry.id = Long.toString(index++);
             idsToPasswordEntriesMap.put(passwordEntry.id, passwordEntry);
         }
     }
