@@ -16,14 +16,7 @@ public class PasswordEntryDetailActivity extends FragmentActivity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState == null) {
-            Bundle arguments = new Bundle();
-            arguments.putString(PasswordEntryDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(PasswordEntryDetailFragment.ARG_ITEM_ID));
-            PasswordEntryDetailFragment fragment = new PasswordEntryDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.passwordentry_detail_container, fragment)
-                    .commit();
+            PasswordEntryDetailFragmentBase.switchDetailFragment(this, getIntent().getStringExtra(Consts.ARG_ITEM_ID), new PasswordEntryDetailFragment());
         }
     }
 

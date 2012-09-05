@@ -19,19 +19,11 @@ public class GoogleAuthActivity extends Activity implements GoogleAuthWebViewCli
     SharedPreferences prefs;
 
     
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    }
-
-    @SuppressLint("SetJavaScriptEnabled")
-    @Override
-    public void onResume() {
-        super.onResume();
-        
-        setTitle("Login to continue!");
-        
         WebView webview = new WebView(this);
         webview.getSettings().setJavaScriptEnabled(true);  
         webview.setVisibility(View.VISIBLE);
@@ -41,8 +33,9 @@ public class GoogleAuthActivity extends Activity implements GoogleAuthWebViewCli
         GoogleAuthorizationCodeRequestUrl urlBuilder = flow.newAuthorizationUrl().setRedirectUri(Constants.REDIRECT_URI);
         webview.setWebViewClient(new GoogleAuthWebViewClient(flow, this));        
         webview.loadUrl(urlBuilder.build());
+        setTitle("Login to continue!");
     }
-
+    
     @Override
     public void onSuccess() {
         Logger.i("GoogleAuthActivity", "onSuccess!");

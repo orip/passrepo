@@ -10,5 +10,11 @@
     <string name="title_label">Title</string>
     <string name="user_name_label">User Name</string>
     <string name="password_label">Password</string>
+    <string name="update_button_label">Update</string>
+    <string name="cancel_button_label">Cancel</string>
+    <string name="change_password_menu_label">Change Password</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_copy_password_to_clipboard">CopyPasswordToClipboardActivity</string>
 
 </resources>

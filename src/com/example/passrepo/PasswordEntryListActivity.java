@@ -1,14 +1,20 @@
 package com.example.passrepo;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-
+import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Base64;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.passrepo.crypto.Encryption;
 import com.example.passrepo.crypto.Encryption.CipherText;
@@ -22,13 +28,8 @@ import com.example.passrepo.model.Model;
 import com.example.passrepo.util.GsonHelper;
 import com.example.passrepo.util.Logger;
 import com.google.common.base.Charsets;
-import com.google.common.io.CharStreams;
-import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
-import com.google.common.io.OutputSupplier;
 
 public class PasswordEntryListActivity extends FragmentActivity implements PasswordEntryListFragment.Callbacks {
-    private static final String PASSWORD_DATABASE_FILENAME = "password_database.json";
     private boolean mTwoPane;
     
     private GoogleDriveUtil googleDriveUtil;
@@ -47,81 +48,36 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             ((PasswordEntryListFragment) getSupportFragmentManager().findFragmentById(R.id.passwordentry_list))
                     .setActivateOnItemClick(true);
         }
-        
-        loadModel();
-    }
 
-    private void loadModel() {
-        if (Model.currentModel == null) {
-            Logger.i("IO", "loading model");
+        testDriveEncryption();
 
-            try {                
-                String fileContents = CharStreams.toString(new InputSupplier<InputStreamReader>() {
-                    public InputStreamReader getInput() throws IOException {
-                        return new InputStreamReader(openFileInput(PASSWORD_DATABASE_FILENAME), Charsets.UTF_8);
-                    }
-                });
-                
-                GoogleDriveUtil gdu = new GoogleDriveUtil(this);
-                if (gdu.isAuthorized()) {
-                    fileContents = gdu.download();
-                }
-                Model.currentModel = IO.modelFromEncryptedString(fileContents, DummyContent.dummyKey);
-                Logger.i("IO", "sucessfully loaded model from disk");
-
-            } catch (IOException e) {
-                Model.currentModel = DummyContent.model;
-                Logger.i("IO", "loaded dummy model");
-            }
-        }
-    }
-    
-    private void saveModel() {
-        try {
-            CharStreams.write(IO.modelToEncryptedString(Model.currentModel), new OutputSupplier<OutputStreamWriter>() {
-                public OutputStreamWriter getOutput() throws IOException {
-                    return new OutputStreamWriter(openFileOutput(PASSWORD_DATABASE_FILENAME, MODE_PRIVATE));
-                }
-            });
-            File f = new File(new File("/mnt/sdcard"), PASSWORD_DATABASE_FILENAME);
-            Files.write(IO.modelToEncryptedString(Model.currentModel), f, Charsets.UTF_8);
-            Logger.i("IO", "saved model to disk");
-            new GoogleDriveUtil(this).update(f, Constants.FILE_ID_TEMP);
-            
-            Logger.i("IO", "saved model to drive!!!");
-        } catch (IOException e) {
-            Logger.i("IO", "error saving model to disk");
-            throw new RuntimeException(e);
-        }
+        if (Model.currentModel == null)
+            IO.loadModel(this);
     }
 
     @Override
     public void onItemSelected(String id) {
         if (mTwoPane) {
-            Bundle arguments = new Bundle();
-            arguments.putString(PasswordEntryDetailFragment.ARG_ITEM_ID, id);
-            PasswordEntryDetailFragment fragment = new PasswordEntryDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction().replace(R.id.passwordentry_detail_container, fragment).commit();
-
+            PasswordEntryDetailFragmentBase.switchDetailFragment(this, id, new PasswordEntryDetailFragment());
         } else {
             Intent detailIntent = new Intent(this, PasswordEntryDetailActivity.class);
-            detailIntent.putExtra(PasswordEntryDetailFragment.ARG_ITEM_ID, id);
+            detailIntent.putExtra(Consts.ARG_ITEM_ID, id);
             startActivity(detailIntent);
         }
     }
-
+    
     @Override
-    protected void onResume() {
-        super.onResume();
-        testDriveEncryption();
+    protected void onStop() {
+        super.onStop();
+        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancel(Consts.COPY_PASSWORD_NOTIFICATION_ID);
     }
+    
     
     @Override
     protected void onPause() {
         super.onPause();
         if (googleDriveUtil.isAuthorized())
-            saveModel();
+            IO.saveModel(this);
     }
 
     @SuppressWarnings("unused")
@@ -140,6 +96,36 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             Logger.i("TEST", "derivedKey=%s", Base64.encodeToString(key, Base64.NO_WRAP));
             Logger.i("TEST", "encrypted=%s", Base64.encodeToString(encrypted.bytes, Base64.NO_WRAP));
             Logger.i("TEST", "decrypted=%s", decrypted);
+        }
+    }
+
+    private static final int MENU_CHANGE_PASSWORD = 1;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(Menu.NONE, MENU_CHANGE_PASSWORD, Menu.NONE, R.string.change_password_menu_label).setIcon(
+                android.R.drawable.ic_menu_agenda);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case MENU_CHANGE_PASSWORD:
+            LayoutInflater factory = LayoutInflater.from(this);
+            final View textEntryView = factory.inflate(R.layout.change_password_alert_dialog, null);
+
+            new AlertDialog.Builder(this).setView(textEntryView).setPositiveButton("Update", new OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    String password = ((EditText) textEntryView.findViewById(R.id.password_entry_1)).getText().toString();
+                    Model.currentModel.key = PasswordHasher.hash(password, Model.currentModel.scryptParameters);
+                    IO.saveModel(PasswordEntryListActivity.this);
+                    Toast.makeText(PasswordEntryListActivity.this, "Password updated", Toast.LENGTH_LONG).show();
+                }
+            }).setNegativeButton("Not now", null).setCancelable(true).setOnCancelListener(null).show();
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
         }
     }
 }
