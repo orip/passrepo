@@ -1,14 +1,14 @@
 package com.example.passrepo;
 
-import com.example.passrepo.dummy.DummyContent;
-
-import android.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.example.passrepo.dummy.DummyContent;
+import com.example.passrepo.model.PasswordEntry;
 
 public class PasswordEntryListFragment extends ListFragment {
 
@@ -18,7 +18,6 @@ public class PasswordEntryListFragment extends ListFragment {
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
     public interface Callbacks {
-
         public void onItemSelected(String id);
     }
 
@@ -34,9 +33,9 @@ public class PasswordEntryListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-                R.layout.simple_list_item_activated_1,
-                R.id.text1,
+        setListAdapter(new ArrayAdapter<PasswordEntry>(getActivity(),
+                android.R.layout.simple_list_item_activated_1,
+                android.R.id.text1,
                 DummyContent.ITEMS));
     }
 
