@@ -82,7 +82,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             File f = new File(new File("/mnt/sdcard"), PASSWORD_DATABASE_FILENAME);
             Files.write(IO.modelToEncryptedString(Model.currentModel), f, Charsets.UTF_8);
             Logger.i("IO", "saved model to disk");
-            new GoogleDriveUtil(this).upload(f);            
+            new GoogleDriveUtil(this).create(f);
             
             Logger.i("IO", "saved model to drive!!!");
         } catch (IOException e) {
