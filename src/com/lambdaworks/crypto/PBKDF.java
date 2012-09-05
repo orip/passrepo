@@ -2,10 +2,12 @@
 
 package com.lambdaworks.crypto;
 
+import static java.lang.System.arraycopy;
+
+import java.security.GeneralSecurityException;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.GeneralSecurityException;
-import static java.lang.System.arraycopy;
 
 /**
  * An implementation of the Password-Based Key Derivation Function as specified
