@@ -2,6 +2,7 @@ package com.example.passrepo;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.TextView;
 
@@ -23,11 +24,15 @@ public abstract class PasswordEntryDetailFragmentBase extends Fragment {
         mItem = DummyContent.model.getPasswordEntry(getArguments().getString(Consts.ARG_ITEM_ID));
     }
 
-    protected void switchToDetailFragment(Fragment detailFragment) {
+    public static void switchDetailFragment(FragmentActivity activity, String itemId, Fragment detailFragment) {
         Bundle arguments = new Bundle();
-        arguments.putString(Consts.ARG_ITEM_ID, mItem.id);
+        arguments.putString(Consts.ARG_ITEM_ID, itemId);
         detailFragment.setArguments(arguments);
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.passwordentry_detail_container, detailFragment).commit();
+        activity.getSupportFragmentManager().beginTransaction().replace(R.id.passwordentry_detail_container, detailFragment).commit();
+    }
+    
+    protected void switchToDetailFragment(Fragment detailFragment) {
+        PasswordEntryDetailFragmentBase.switchDetailFragment(getActivity(), mItem.id, detailFragment);
     }
     
     protected void updateRootView(View rootView) {

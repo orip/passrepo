@@ -16,7 +16,6 @@ import com.example.passrepo.model.Model;
 import com.example.passrepo.util.GsonHelper;
 import com.example.passrepo.util.Logger;
 import com.google.common.base.Charsets;
-import com.google.common.base.Preconditions;
 
 public class PasswordEntryListActivity extends FragmentActivity implements PasswordEntryListFragment.Callbacks {
     private boolean mTwoPane;
@@ -41,8 +40,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     @Override
     public void onItemSelected(String id) {
         if (mTwoPane) {
-            int fragmentId = R.id.passwordentry_detail_container;
-            switchDetailFragment(id, fragmentId);
+            PasswordEntryDetailFragmentBase.switchDetailFragment(this, id, new PasswordEntryDetailFragment());
         } else {
             Intent detailIntent = new Intent(this, PasswordEntryDetailActivity.class);
             detailIntent.putExtra(Consts.ARG_ITEM_ID, id);
@@ -50,32 +48,10 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
         }
     }
 
-    // TODO: duplicating code in PasswordEntryDetailActivity
-    private void switchDetailFragment(String id, int fragmentId) {
-        Logger.i("bla", "switching fragment, item_id=%s, fragment_id=%s", id, fragmentId);
-        Bundle arguments = new Bundle();
-        arguments.putString(Consts.ARG_ITEM_ID, id);
-        PasswordEntryDetailFragment fragment = new PasswordEntryDetailFragment();
-        fragment.setArguments(arguments);
-        getSupportFragmentManager().beginTransaction().replace(fragmentId, fragment).commit();
-    }
-
-    private String getItemIdFromIntent(Intent intent) {
-        return Preconditions.checkNotNull(intent.getExtras().getString(Consts.ARG_ITEM_ID));
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-        Intent intent = getIntent();
-        Logger.i("bla", "onResume, intent=%s", intent);
-        if (intent != null) {
-            if (Consts.EDIT_ACTION.equals(intent.getAction())) {
-                switchDetailFragment(getItemIdFromIntent(intent), R.layout.fragment_passwordentry_detail_edit);
-            } else if (Consts.VIEW_ACTION.equals(intent.getAction())) {
-                switchDetailFragment(getItemIdFromIntent(intent), R.layout.fragment_passwordentry_detail);
-            }
-        }
+        Logger.i("bla", "onResume");
         GoogleDriveUtil.authorize(this);
     }
 
