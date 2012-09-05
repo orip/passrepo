@@ -3,5 +3,12 @@
     <string name="app_name">PassRepo</string>
     <string name="title_passwordentry_detail">PasswordEntry Detail</string>
     <string name="title_passwordentry_list">PasswordEntries</string>
+    <string name="edit_button_label">Edit</string>
+    <string name="title_hint">Enter title</string>
+    <string name="user_name_hint">Enter user name</string>
+    <string name="password_hint">Enter password</string>
+    <string name="title_label">Title</string>
+    <string name="user_name_label">User Name</string>
+    <string name="password_label">Password</string>
 
 </resources>
