@@ -61,7 +61,10 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
                     }
                 });
                 
-                //String fileContents = new GoogleDriveUtil(this).download();
+                GoogleDriveUtil gdu = new GoogleDriveUtil(this);
+                if (gdu.isAuthorized()) {
+                    fileContents = gdu.download();
+                }
                 Model.currentModel = IO.modelFromEncryptedString(fileContents, DummyContent.dummyKey);
                 Logger.i("IO", "sucessfully loaded model from disk");
 
