@@ -10,6 +10,7 @@ import android.content.Context;
 import com.example.passrepo.crypto.Encryption;
 import com.example.passrepo.crypto.Encryption.CipherText;
 import com.example.passrepo.dummy.DummyContent;
+import com.example.passrepo.gdrive.GoogleDriveUtil;
 import com.example.passrepo.model.Model;
 import com.example.passrepo.util.GsonHelper;
 import com.example.passrepo.util.Logger;
@@ -38,35 +39,48 @@ public class IO {
         return result;
     }
 
+    public static void loadModel(final Context context) {
+        if (Model.currentModel == null) {
+            Logger.i("IO", "loading model");
+
+            try {                
+                String fileContents = CharStreams.toString(new InputSupplier<InputStreamReader>() {
+                    public InputStreamReader getInput() throws IOException {
+                        return new InputStreamReader(context.openFileInput(PASSWORD_DATABASE_FILENAME), Charsets.UTF_8);
+                    }
+                });
+                
+                GoogleDriveUtil gdu = new GoogleDriveUtil(context.getApplicationContext());
+                if (gdu.isAuthorized()) {
+                    fileContents = gdu.download();
+                }
+                Model.currentModel = IO.modelFromEncryptedString(fileContents, DummyContent.dummyKey);
+                Logger.i("IO", "sucessfully loaded model from disk");
+
+            } catch (IOException e) {
+                Model.currentModel = DummyContent.model;
+                Logger.i("IO", "loaded dummy model");
+            }
+        }
+    }
+    
     public static void saveModel(final Context context) {
         try {
-            CharStreams.write(modelToEncryptedString(Model.currentModel), new OutputSupplier<OutputStreamWriter>() {
+            CharStreams.write(IO.modelToEncryptedString(Model.currentModel), new OutputSupplier<OutputStreamWriter>() {
                 public OutputStreamWriter getOutput() throws IOException {
                     return new OutputStreamWriter(context.openFileOutput(PASSWORD_DATABASE_FILENAME, Context.MODE_PRIVATE));
                 }
             });
-            Files.write(IO.modelToEncryptedString(Model.currentModel), new File(new File("/mnt/sdcard"),
-                    PASSWORD_DATABASE_FILENAME), Charsets.UTF_8);
+            File f = new File(new File("/mnt/sdcard"), PASSWORD_DATABASE_FILENAME);
+            Files.write(IO.modelToEncryptedString(Model.currentModel), f, Charsets.UTF_8);
             Logger.i("IO", "saved model to disk");
+            new GoogleDriveUtil(context.getApplicationContext()).create(f);
+            
+            Logger.i("IO", "saved model to drive!!!");
         } catch (IOException e) {
             Logger.i("IO", "error saving model to disk");
             throw new RuntimeException(e);
         }
     }
 
-    public static void loadModel(final Context context) {
-        Logger.i("IO", "loading model");
-        try {
-            String fileContents = CharStreams.toString(new InputSupplier<InputStreamReader>() {
-                public InputStreamReader getInput() throws IOException {
-                    return new InputStreamReader(context.openFileInput(PASSWORD_DATABASE_FILENAME), Charsets.UTF_8);
-                }
-            });
-            Model.currentModel = IO.modelFromEncryptedString(fileContents, DummyContent.dummyKey);
-            Logger.i("IO", "sucessfully loaded model from disk");
-        } catch (IOException e) {
-            Model.currentModel = DummyContent.model;
-            Logger.i("IO", "loaded dummy model");
-        }
-    }
 }

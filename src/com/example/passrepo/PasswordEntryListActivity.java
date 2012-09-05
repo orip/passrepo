@@ -30,10 +30,16 @@ import com.google.common.base.Charsets;
 
 public class PasswordEntryListActivity extends FragmentActivity implements PasswordEntryListFragment.Callbacks {
     private boolean mTwoPane;
+    
+    private GoogleDriveUtil googleDriveUtil;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        googleDriveUtil = new GoogleDriveUtil(this);
+        googleDriveUtil.authorize();
+        
         setContentView(R.layout.activity_passwordentry_list);
 
         if (findViewById(R.id.passwordentry_detail_container) != null) {
@@ -58,18 +64,19 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             startActivity(detailIntent);
         }
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Logger.i("bla", "onResume");
-        //GoogleDriveUtil.authorize(this);
-    }
     
     @Override
     protected void onStop() {
         super.onStop();
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancel(Consts.COPY_PASSWORD_NOTIFICATION_ID);
+    }
+    
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (googleDriveUtil.isAuthorized())
+            IO.saveModel(this);
     }
 
     @SuppressWarnings("unused")
