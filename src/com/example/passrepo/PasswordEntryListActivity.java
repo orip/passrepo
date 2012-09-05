@@ -71,6 +71,14 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
         super.onStop();
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancel(Consts.COPY_PASSWORD_NOTIFICATION_ID);
     }
+
+    protected void onResume() {
+        super.onResume();
+        testDriveEncryption();
+        
+
+        loadModel();
+    }
     
     
     @Override
