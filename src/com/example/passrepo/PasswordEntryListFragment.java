@@ -36,7 +36,7 @@ public class PasswordEntryListFragment extends ListFragment {
         setListAdapter(new ArrayAdapter<PasswordEntry>(getActivity(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
-                DummyContent.ITEMS));
+                DummyContent.model.passwordEntries));
     }
 
     @Override
@@ -67,7 +67,7 @@ public class PasswordEntryListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
-        mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
+        mCallbacks.onItemSelected(DummyContent.model.passwordEntries.get(position).id);
     }
 
     @Override

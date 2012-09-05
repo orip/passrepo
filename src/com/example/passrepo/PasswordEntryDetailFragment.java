@@ -24,7 +24,7 @@ public class PasswordEntryDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments().containsKey(ARG_ITEM_ID)) {
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+            mItem = DummyContent.model.getPasswordEntry(getArguments().getString(ARG_ITEM_ID));
         }
     }
 

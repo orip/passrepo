@@ -6,8 +6,7 @@ public class PasswordEntry {
     public String userName;
     public String password;
 
-    public PasswordEntry(String id, String title, String userName, String password) {
-        this.id = id;
+    public PasswordEntry(String title, String userName, String password) {
         this.title = title;
         this.userName = userName;
         this.password = password;
