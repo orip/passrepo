@@ -4,9 +4,6 @@ import java.io.IOException;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Bundle;
-import android.view.Menu;
-import android.widget.TextView;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
@@ -20,19 +17,6 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 public class GoogleDriveActivity extends Activity {
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main, menu);
-        return true;
-    }
-        
     @Override
     public void onResume() {
         super.onResume();
@@ -73,7 +57,7 @@ public class GoogleDriveActivity extends Activity {
                 FileContent mediaContent = new FileContent("application/json", fileContent);
 
                 try {
-                    File file = service.files().insert(body, mediaContent).execute();
+                    service.files().insert(body, mediaContent).execute();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

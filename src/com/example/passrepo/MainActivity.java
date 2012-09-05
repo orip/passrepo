@@ -18,9 +18,7 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         
-        ((TextView)findViewById(R.id.foo)).setText(Base64.encodeToString(PasswordHasher.hash("foo"), Base64.NO_WRAP));
         /*
         try {
             new SharedPreferencesCredentialStore(this).delete(null, null);
@@ -31,12 +29,6 @@ public class MainActivity extends Activity {
         */
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main, menu);
-        return true;
-    }
-        
     @Override
     public void onResume() {
         super.onResume();
