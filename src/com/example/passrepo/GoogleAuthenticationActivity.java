@@ -4,14 +4,18 @@ import java.util.Arrays;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.example.passrepo.drive.util.QueryStringParser;
+import com.example.passrepo.store.CredentialStore;
+import com.example.passrepo.store.SharedPreferencesCredentialStore;
+import com.example.passrepo.util.QueryStringParser;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
@@ -29,11 +33,14 @@ public class GoogleAuthenticationActivity extends Activity {
     
     GoogleAuthorizationCodeFlow flow;
     boolean m_isFinishedRedirect = false;
+    SharedPreferences prefs;
 
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        
         setContentView(R.layout.activity_main);
     }
 
@@ -117,6 +124,9 @@ public class GoogleAuthenticationActivity extends Activity {
                 
                 System.out.println("accessToken=" + accessToken);
                 System.out.println("refreshToken=" + refreshToken);
+                
+                CredentialStore credentialStore = new SharedPreferencesCredentialStore(prefs);
+                credentialStore.write(new String[] {accessToken, refreshToken});
                 
                 finish();
             }

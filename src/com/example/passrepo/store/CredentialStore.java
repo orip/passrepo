@@ -1,4 +1,4 @@
-package com.example.passrepo.drive.store;
+package com.example.passrepo.store;
 
 
 public interface CredentialStore {

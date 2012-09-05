@@ -3,11 +3,14 @@ package com.example.passrepo;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.view.Menu;
 import android.widget.TextView;
 
 import com.example.passrepo.crypto.PasswordHasher;
+import com.example.passrepo.store.CredentialStore;
+import com.example.passrepo.store.SharedPreferencesCredentialStore;
 
 public class MainActivity extends Activity {
 
@@ -29,7 +32,16 @@ public class MainActivity extends Activity {
     public void onResume() {
         super.onResume();
         
-        // TODO: Start activity only if there are no saved credentials.
-        startActivity(new Intent().setClass(getApplicationContext(),GoogleAuthenticationActivity.class));
+        CredentialStore credentialStore = new SharedPreferencesCredentialStore(
+                PreferenceManager.getDefaultSharedPreferences(this));
+        String[] credentials = credentialStore.read();
+        
+        if (credentials[0] == null) {
+            System.out.println("Access Token isn't saved yet, starting Google Authentication process..");
+            startActivity(new Intent().setClass(getApplicationContext(),GoogleAuthenticationActivity.class));
+        }
+        
+        setTitle("Logged-in! Start using Drive!");
+        System.out.println("Logged-in accessToken=" + credentials[0]);
     }
 }
