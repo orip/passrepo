@@ -28,13 +28,13 @@ public class GoogleAuthWebViewClient extends WebViewClient {
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        System.out.println("page started: " + url);
+        System.out.println("page started");
         super.onPageStarted(view, url, favicon);
     }            
     
     @Override
     public void onPageFinished(WebView view, final String url) {
-        System.out.println("page finished: " + url);
+        System.out.println("page finished");
         
         if (!url.startsWith("http://local")) {
             super.onPageFinished(view, url);

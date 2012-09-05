@@ -53,23 +53,22 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     private void loadModel() {
         if (Model.currentModel == null) {
             Logger.i("IO", "loading model");
-            /*
+
             try {                
                 String fileContents = CharStreams.toString(new InputSupplier<InputStreamReader>() {
                     public InputStreamReader getInput() throws IOException {
                         return new InputStreamReader(openFileInput(PASSWORD_DATABASE_FILENAME), Charsets.UTF_8);
                     }
                 });
-              */  
-                String fileContents = new GoogleDriveUtil(this).download();
                 
+                //String fileContents = new GoogleDriveUtil(this).download();
                 Model.currentModel = IO.modelFromEncryptedString(fileContents, DummyContent.dummyKey);
                 Logger.i("IO", "sucessfully loaded model from disk");
-                /*
+
             } catch (IOException e) {
                 Model.currentModel = DummyContent.model;
                 Logger.i("IO", "loaded dummy model");
-            }*/
+            }
         }
     }
     
@@ -83,7 +82,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             File f = new File(new File("/mnt/sdcard"), PASSWORD_DATABASE_FILENAME);
             Files.write(IO.modelToEncryptedString(Model.currentModel), f, Charsets.UTF_8);
             Logger.i("IO", "saved model to disk");
-            new GoogleDriveUtil(this).upload(f);            
+            new GoogleDriveUtil(this).create(f);
             
             Logger.i("IO", "saved model to drive!!!");
         } catch (IOException e) {

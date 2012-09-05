@@ -56,8 +56,7 @@ public class GoogleDriveUtil {
     
     final String FILENAME = "PassRepoStorage";
     
-    public void upload(final java.io.File file) {
-        //authorize();
+    public void create(final java.io.File file) {        
         System.out.println("Uploading file...");
         
         Runnable r = new Runnable() {
@@ -72,7 +71,6 @@ public class GoogleDriveUtil {
                 
                 File r = null;
                 try {
-                    // TODO if file exists, update 
                     r = drive.files().insert(driveMetaData, content).execute();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -84,6 +82,32 @@ public class GoogleDriveUtil {
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
+                }
+                
+                System.out.println("Success!");
+            }
+        };
+        
+        runThread(r);
+    }
+    
+    public void update(final java.io.File file, final String fileID) {        
+        System.out.println("Uploading file...");
+        
+        Runnable r = new Runnable() {
+            public void run() {
+
+                File driveMetaData = new File();
+                driveMetaData.setTitle(FILENAME);
+                driveMetaData.setDescription("Pass Repo Storage");
+                driveMetaData.setMimeType("application/json");
+                
+                FileContent content = new FileContent("application/json", file);
+                
+                try {
+                    drive.files().update(fileID, driveMetaData, content).execute();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
                 
                 System.out.println("Success!");
