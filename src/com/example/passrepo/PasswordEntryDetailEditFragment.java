@@ -16,34 +16,19 @@ import com.example.passrepo.model.PasswordEntry;
 import com.example.passrepo.util.Logger;
 import com.google.common.base.Preconditions;
 
-public class PasswordEntryDetailEditFragment extends Fragment {
-    // TODO: similar to PasswordEntryDetailFragment, extract common base class
-    PasswordEntry mItem;
-
-    private EditText title;
-
-    private EditText password;
-
-    private EditText userName;
-
+public class PasswordEntryDetailEditFragment extends PasswordEntryDetailFragmentBase {
     public PasswordEntryDetailEditFragment() {
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Preconditions.checkState(getArguments().containsKey(Consts.ARG_ITEM_ID));
-        mItem = DummyContent.model.getPasswordEntry(getArguments().getString(Consts.ARG_ITEM_ID));
-    }
-
     private void switchToViewMode() {
-        getActivity().startActivity(new Intent(getActivity(), getActivity().getClass()).setAction(Consts.VIEW_ACTION).putExtra(Consts.ARG_ITEM_ID, mItem.id).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
+        switchToDetailFragment(new PasswordEntryDetailFragment());
     }
 
     private void saveEntry() {
-        mItem.title = title.getText().toString();
-        mItem.userName = userName.getText().toString();
-        mItem.password = password.getText().toString();
+        mItem.title = ((EditText) getView().findViewById(R.id.title)).getText().toString();
+        mItem.userName = ((EditText) getView().findViewById(R.id.userName)).getText().toString();
+        mItem.password = ((EditText) getView().findViewById(R.id.password)).getText().toString();
+        
     }
 
     @Override
