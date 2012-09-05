@@ -1,8 +1,7 @@
 <resources>
 
     <string name="app_name">PassRepo</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="menu_settings">Settings</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_passwordentry_detail">PasswordEntry Detail</string>
+    <string name="title_passwordentry_list">PasswordEntries</string>
 
 </resources>

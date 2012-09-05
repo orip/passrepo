@@ -12,13 +12,20 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
-            android:label="@string/title_activity_main" >
+            android:name=".PasswordEntryListActivity"
+            android:label="@string/title_passwordentry_list" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".PasswordEntryDetailActivity"
+            android:label="@string/title_passwordentry_detail" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".PasswordEntryListActivity" />
         </activity>
     </application>
 
