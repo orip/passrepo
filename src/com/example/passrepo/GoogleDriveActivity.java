@@ -18,9 +18,12 @@ import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
+import com.google.api.client.http.FileContent;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson.JacksonFactory;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
 
 public class GoogleDriveActivity extends Activity {
 
@@ -40,10 +43,9 @@ public class GoogleDriveActivity extends Activity {
     public void onResume() {
         super.onResume();
         
-        HttpTransport ht = new NetHttpTransport();
-        JacksonFactory jsonF = new JacksonFactory();        
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                ht, jsonF, Constants.CLIENT_ID, Constants.CLIENT_SECRET, Constants.SCOPES).build();
+        System.out.println("GoogleDriveActivity:onResume started");
+        
+        GoogleAuthorizationCodeFlow flow = PassRepoGoogleAuthorizationCodeFlow.getInstance();
         
         Credential cred = null;
         try {
@@ -51,9 +53,30 @@ public class GoogleDriveActivity extends Activity {
         } catch(IOException e) {
             e.printStackTrace();
         }
+
+        HttpTransport ht = new NetHttpTransport();
+        JacksonFactory jsonF = new JacksonFactory();
+        Drive service = new Drive.Builder(ht, jsonF, cred).build();
         
-        Drive service = new Drive.Builder(ht, jsonF, cred);
+        File body = new File();
+        body.setTitle("PassRepoStorage");
+        body.setDescription("Pass Repo Storage");
+        body.setMimeType("application/json");
         
-        ((TextView)findViewById(R.id.foo)).setText(Base64.encodeToString(PasswordHasher.hash("foo"), Base64.NO_WRAP));
+        java.io.File fileContent = new java.io.File("/tmp/filename");
+        FileContent mediaContent = new FileContent("application/json", fileContent);
+        
+        try {
+            System.out.println("Uploading file...");
+            File file = service.files().insert(body, mediaContent).execute();
+            
+            ((TextView)findViewById(R.id.foo)).setText("SUCCESS! Uploaded a file!");
+            
+            System.out.println("Success!");
+            
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }

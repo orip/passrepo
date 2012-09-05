@@ -55,10 +55,7 @@ public class GoogleAuthenticationActivity extends Activity {
     }
         
     public synchronized void tryAuth() {
-        HttpTransport ht = new NetHttpTransport();
-        JacksonFactory jsonF = new JacksonFactory();        
-        final GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                ht, jsonF, Constants.CLIENT_ID, Constants.CLIENT_SECRET, Constants.SCOPES).build();
+        final GoogleAuthorizationCodeFlow flow = PassRepoGoogleAuthorizationCodeFlow.getInstance();
         
         // TODO already logged in?
         GoogleAuthorizationCodeRequestUrl urlBuilder = flow.newAuthorizationUrl().setRedirectUri(Constants.REDIRECT_URI);
@@ -108,27 +105,24 @@ public class GoogleAuthenticationActivity extends Activity {
                 t.start();
                 System.out.println("Waiting on thread..");
                 try {
-                    t.join(10000);
+                    t.join(20000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 System.out.println("done waiting!");
                 
                 GoogleTokenResponse gtk = nr.getRes();
-                String accessToken = gtk.getAccessToken();
-                String refreshToken = gtk.getRefreshToken();
-                
-                System.out.println("accessToken=" + accessToken);
-                System.out.println("refreshToken=" + refreshToken);
                 
                 Credential credential = null;
                 try {
                     credential = flow.createAndStoreCredential(gtk, null);
+                    
+                    System.out.println("Finished storing credentials! Going back!");
+                    
+                    finish();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                
-                finish();
             }
         });
         

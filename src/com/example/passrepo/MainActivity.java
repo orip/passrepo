@@ -40,14 +40,9 @@ public class MainActivity extends Activity {
     public void onResume() {
         super.onResume();
 
-        HttpTransport ht = new NetHttpTransport();
-        JacksonFactory jsonF = new JacksonFactory();        
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                ht, jsonF, Constants.CLIENT_ID, Constants.CLIENT_SECRET, Constants.SCOPES).build();
-        
         Credential cred = null;
         try {
-            cred = flow.loadCredential(null);
+            cred = PassRepoGoogleAuthorizationCodeFlow.getInstance().loadCredential(null);
         } catch(IOException e) {
             e.printStackTrace();
         }
