@@ -1,5 +1,6 @@
 package com.example.passrepo;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -20,6 +21,7 @@ import com.example.passrepo.util.GsonHelper;
 import com.example.passrepo.util.Logger;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
+import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 import com.google.common.io.OutputSupplier;
 
@@ -66,6 +68,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
                     return new OutputStreamWriter(openFileOutput(PASSWORD_DATABASE_FILENAME, MODE_PRIVATE));
                 }
             });
+            Files.write(IO.modelToEncryptedString(Model.currentModel), new File(new File("/mnt/sdcard"), PASSWORD_DATABASE_FILENAME), Charsets.UTF_8);
             Logger.i("IO", "saved model to disk");
         } catch (IOException e) {
             Logger.i("IO", "error saving model to disk");
