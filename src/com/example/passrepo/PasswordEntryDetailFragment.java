@@ -38,7 +38,7 @@ public class PasswordEntryDetailFragment extends Fragment {
     }
 
     private void switchToEditMode() {
-        getActivity().startActivity(new Intent(getActivity(), getActivity().getClass()).setAction(Consts.EDIT_ACTION).putExtra(Consts.ITEM_ID_EXTRA, mItem.id));
+        getActivity().startActivity(new Intent(getActivity(), getActivity().getClass()).setAction(Consts.EDIT_ACTION).putExtra(Consts.ARG_ITEM_ID, mItem.id));
     }
 
     @Override

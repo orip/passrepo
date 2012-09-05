@@ -114,7 +114,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     }
 
     private String getItemIdFromIntent(Intent intent) {
-        return Preconditions.checkNotNull(intent.getExtras().getString(Consts.ITEM_ID_EXTRA));
+        return Preconditions.checkNotNull(intent.getExtras().getString(Consts.ARG_ITEM_ID));
     }
 
     @Override
