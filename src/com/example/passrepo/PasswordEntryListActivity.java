@@ -41,6 +41,8 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             ((PasswordEntryListFragment) getSupportFragmentManager().findFragmentById(R.id.passwordentry_list))
                     .setActivateOnItemClick(true);
         }
+        
+        testDriveEncryption();
 
         loadModel();
     }
@@ -120,7 +122,6 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     @Override
     protected void onResume() {
         super.onResume();
-        testDriveEncryption();
         GoogleDriveUtil.authorize(this);
     }
 
