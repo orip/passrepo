@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.passrepo.dummy.DummyContent;
 import com.example.passrepo.model.PasswordEntry;
+import com.example.passrepo.util.Logger;
 
 public class PasswordEntryDetailFragment extends Fragment {
 
@@ -31,6 +32,7 @@ public class PasswordEntryDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_passwordentry_detail, container, false);
+        Logger.i("PasswordEntryDetailFragment", "mItem=%s", mItem);
         if (mItem != null) {
             ((TextView) rootView.findViewById(R.id.title)).setText(mItem.title);
             ((TextView) rootView.findViewById(R.id.userName)).setText(mItem.userName);
