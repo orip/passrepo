@@ -17,7 +17,7 @@ public class NetworkRunnable implements Runnable {
     @Override
     public void run() {
         try {
-            m_res = this.m_req.execute();
+            m_res = m_req.execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
