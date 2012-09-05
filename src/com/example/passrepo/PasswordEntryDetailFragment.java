@@ -13,6 +13,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.passrepo.util.Logger;
+
 public class PasswordEntryDetailFragment extends PasswordEntryDetailFragmentBase {
     public PasswordEntryDetailFragment() {
     }
@@ -34,18 +36,21 @@ public class PasswordEntryDetailFragment extends PasswordEntryDetailFragmentBase
     @Override
     public void onResume() {
         super.onResume();
+        Logger.i("bla", "detail view onResume");
         Intent intent = new Intent(getActivity(), CopyPasswordToClipboardActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(), 0, intent, 0);
         Notification notification = new NotificationCompat.Builder(getActivity())
                 .setContentTitle(String.format("Password entry for '%s'", mItem.title))
                 .setContentText("Tap to copy password to clipboard").setAutoCancel(false).setPriority(Notification.PRIORITY_HIGH)
                 .setOngoing(true).setContentIntent(pendingIntent).setSubText(String.format("Username: '%s'", mItem.userName))
+                .setSmallIcon(android.R.drawable.ic_input_add)
                 .build();
         getNotificationManager().notify(Consts.COPY_PASSWORD_NOTIFICATION_ID, notification);
     }
 
     @Override
     public void onPause() {
+        Logger.i("bla", "detail view onPause");
         super.onPause();
         getNotificationManager().cancel(Consts.COPY_PASSWORD_NOTIFICATION_ID);
     }
