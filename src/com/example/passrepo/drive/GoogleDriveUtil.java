@@ -192,10 +192,10 @@ public class GoogleDriveUtil {
 
                 String existingPassRepoFileID = getPassRepoFileID();
 
+                File r = null;
                 if (existingPassRepoFileID == null) {
                     Logger.i("GoogleDriveUtil", "Creating a new file (PassRepo file ID doesn't exist)..");
                     
-                    File r = null;
                     try {
                         r = drive.files().insert(driveMetaData, content).execute();
                     } catch (IOException e) {
@@ -210,13 +210,12 @@ public class GoogleDriveUtil {
                     
                     Logger.i("GoogleDriveUtil", "Successfully created a new file in Google Drive and saved its ID: %s",
                             newPassRepoFileID);
-                    callback.onSuccess();
 
                 } else {
                     Logger.i("GoogleDriveUtil", "Updating the remote file ID: %s", existingPassRepoFileID);
                     
                     try {
-                        drive.files().update(existingPassRepoFileID, driveMetaData, content).execute();
+                        r = drive.files().update(existingPassRepoFileID, driveMetaData, content).execute();
                     } catch (IOException e) {
                         Logger.i("GoogleDriveUtil", "Failed updating remote file %s, its ID may have been removed, clearing it..", existingPassRepoFileID);
                         e.printStackTrace();
@@ -224,10 +223,11 @@ public class GoogleDriveUtil {
                         callback.onError();
                         return;
                     }
-                    
+                                        
                     Logger.i("GoogleDriveUtil", "Successfully updated the existing file in Google Drive: %s", existingPassRepoFileID);
-                    callback.onSuccess();
                 }
+                
+                callback.onSuccess();
             }
         }).start();
     }
