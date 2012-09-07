@@ -1,6 +1,7 @@
 package com.example.passrepo.io;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -40,20 +41,24 @@ public class IO {
     }
 
     public static void loadModelFromDisk(final Context context) {
-        String fileContents;
-        
         try {
-            fileContents = CharStreams.toString(new InputSupplier<InputStreamReader>() {
+            String fileContents = CharStreams.toString(new InputSupplier<InputStreamReader>() {
                 public InputStreamReader getInput() throws IOException {
                     return new InputStreamReader(context.openFileInput(Consts.PASS_REPO_LOCAL_DATABASE_FILENAME), Charsets.UTF_8);
                 }
             });
+            
+            Model.currentModel = IO.modelFromEncryptedString(fileContents, DummyContent.dummyKey);
+            Logger.i("IO", "sucessfully loaded model from disk");
+            
+        } catch (FileNotFoundException e) {
+            // Model doesn't exist on disk (probably first time install), use the dummy instead.
+            Model.currentModel = DummyContent.model;
+            Logger.i("IO", "sucessfully loaded model from dummy content (first time install)");
+            
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        Model.currentModel = IO.modelFromEncryptedString(fileContents, DummyContent.dummyKey);
-        Logger.i("IO", "sucessfully loaded model from disk");
     }
 
     public static void startSyncFromGoogleDriveToDisk(final Context context, final Runnable doneCallback) {

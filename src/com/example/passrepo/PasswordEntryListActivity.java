@@ -29,6 +29,8 @@ import com.google.common.base.Charsets;
 
 public class PasswordEntryListActivity extends FragmentActivity implements PasswordEntryListFragment.Callbacks {
     private boolean mTwoPane;
+    
+    private static final boolean TEST_ENCRYPTION = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,6 +89,8 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
 
     @SuppressWarnings("unused")
     private void testDriveEncryption() {
+        if (!TEST_ENCRYPTION)
+            return;
         String encryptedString = IO.modelToEncryptedString(DummyContent.model);
         Model decryptedModel = IO.modelFromEncryptedString(encryptedString, DummyContent.model.key);
         Logger.i("TEST", "originalModel=%s", GsonHelper.customGson.toJson(DummyContent.model));
