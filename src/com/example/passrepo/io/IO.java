@@ -66,7 +66,7 @@ public class IO {
 
         final GoogleDriveUtil gdu = new GoogleDriveUtil(context.getApplicationContext());
         if (!gdu.isAuthorized()) {
-            Logger.w("IO", "Isn't authorized yet, aborting sync");
+            Logger.w("IO", "Google Drive isn't authorized yet for some reason, aborting sync");
             doneCallback.run();
         }
 
@@ -116,23 +116,44 @@ public class IO {
 
     }
 
-    public static void saveModel(final Context context) {
+    public static void saveModel(final Context context, final Runnable doneCallback) {
+        // Save the encrypted result to the local disk.
+        File f;
         try {
             CharStreams.write(IO.modelToEncryptedString(Model.currentModel), new OutputSupplier<OutputStreamWriter>() {
                 public OutputStreamWriter getOutput() throws IOException {
                     return new OutputStreamWriter(context.openFileOutput(Consts.PASS_REPO_LOCAL_DATABASE_FILENAME, Context.MODE_PRIVATE));
                 }
             });
-            File f = new File(new File("/mnt/sdcard"), Consts.PASS_REPO_LOCAL_DATABASE_FILENAME);
+            f = new File(new File("/mnt/sdcard"), Consts.PASS_REPO_LOCAL_DATABASE_FILENAME);
             Files.write(IO.modelToEncryptedString(Model.currentModel), f, Charsets.UTF_8);
             Logger.i("IO", "saved model to disk");
-            
-            //new GoogleDriveUtil(context.getApplicationContext()).create(f);
-            //Logger.i("IO", "saved model to drive!!!");
         } catch (IOException e) {
-            Logger.i("IO", "error saving model to disk");
+            // TODO
+            Logger.w("IO", "error saving model to disk");
             throw new RuntimeException(e);
         }
+        
+        // Start the asynchronous upload of the local file to Google Drive.
+        final GoogleDriveUtil gdu = new GoogleDriveUtil(context.getApplicationContext());
+        if (!gdu.isAuthorized()) {
+            Logger.w("IO", "Google Drive isn't authorized yet for some reason, aborting upload sync");
+            doneCallback.run();
+            return;
+        }
+        
+        new GoogleDriveUtil(context.getApplicationContext()).uploadPassRepoFileToGoogleDrive( 
+                f, new GoogleDriveResultCallback() {
+            public void onSuccess() {
+                Logger.i("IO", "Successfully uploaded the local file to Google Drive.");
+                doneCallback.run();
+            }
+            
+            public void onError() {
+                Logger.w("IO", "Failed uploading the local file to Google Drive...");
+                doneCallback.run();
+            }
+        });
     }
 
 }

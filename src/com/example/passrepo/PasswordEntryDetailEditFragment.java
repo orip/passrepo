@@ -1,5 +1,6 @@
 package com.example.passrepo;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,17 @@ public class PasswordEntryDetailEditFragment extends PasswordEntryDetailFragment
         mItem.title = ((EditText) getView().findViewById(R.id.title)).getText().toString();
         mItem.userName = ((EditText) getView().findViewById(R.id.userName)).getText().toString();
         mItem.password = ((EditText) getView().findViewById(R.id.password)).getText().toString();
-        IO.saveModel(getActivity());
+        final Activity activity = getActivity();
+        IO.saveModel(activity, new Runnable() {
+            public void run() {
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(activity, "Password updated", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+
     }
 
     @Override

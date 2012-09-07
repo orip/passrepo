@@ -35,19 +35,14 @@ import com.google.common.io.OutputSupplier;
 
 public class GoogleDriveUtil {
 
-    final private static String PASS_REPO_FILE_ID = "PassRepoFileID";
+    final private static String PASS_REPO_FILE_ID_KEY = "PassRepoFileID";
 
-    Context context = null;
-    Drive drive = null;
+    private Context context;
+    private Drive drive;
 
     public GoogleDriveUtil(Context context) {
-        Logger.i("gdriveutil", "Starting to init");
         this.context = context;
-        setDriveInstance();
-        Logger.i("gdriveutil", "init done");
-    }
 
-    private void setDriveInstance() {
         GoogleAuthorizationCodeFlow flow = PassRepoGoogleAuthorizationCodeFlow.getInstance(context);
 
         Credential cred = null;
@@ -62,85 +57,23 @@ public class GoogleDriveUtil {
         drive = new Drive.Builder(ht, jsonF, cred).build();
     }
 
-    public void create(final java.io.File file) {
-        System.out.println("Uploading file...");
-
-        Runnable r = new Runnable() {
-            public void run() {
-
-                File driveMetaData = new File();
-                driveMetaData.setTitle(Consts.PASS_REPO_REMOTE_DATABASE_FILENAME);
-                driveMetaData.setDescription("Pass Repo Storage");
-                driveMetaData.setMimeType("application/json");
-
-                FileContent content = new FileContent("application/json", file);
-
-                File r = null;
-                try {
-                    r = drive.files().insert(driveMetaData, content).execute();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                System.out.println("id: " + r.getId());
-
-                try {
-                    drive.files().get(r.getId()).execute();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-
-                System.out.println("Success!");
-            }
-        };
-
-        runThread(r);
-    }
-
-    public void update(final java.io.File file, final String fileID) {
-        System.out.println("Uploading file...");
-
-        Runnable r = new Runnable() {
-            public void run() {
-
-                File driveMetaData = new File();
-                driveMetaData.setTitle(Consts.PASS_REPO_REMOTE_DATABASE_FILENAME);
-                driveMetaData.setDescription("Pass Repo Storage");
-                driveMetaData.setMimeType("application/json");
-
-                FileContent content = new FileContent("application/json", file);
-
-                try {
-                    drive.files().update(fileID, driveMetaData, content).execute();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-                System.out.println("Success!");
-            }
-        };
-
-        runThread(r);
-    }
-
     // Returns the saved FileID if it exists.
     public String getPassRepoFileID() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString(PASS_REPO_FILE_ID, null);
+        return prefs.getString(PASS_REPO_FILE_ID_KEY, null);
     }
-    
+
     private void savePassRepoFileID(String fileID) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Editor editor = prefs.edit();
-        editor.putString(PASS_REPO_FILE_ID, fileID);
+        editor.putString(PASS_REPO_FILE_ID_KEY, fileID);
         editor.commit();
     }
-    
-    // Returns the saved FileID if it exists.
+
     private void clearPassRepoFileID() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Editor editor = prefs.edit();
-        editor.remove(PASS_REPO_FILE_ID);
+        editor.remove(PASS_REPO_FILE_ID_KEY);
         editor.commit();
     }
 
@@ -174,7 +107,8 @@ public class GoogleDriveUtil {
 
                         if (f.getTitle().equals(Consts.PASS_REPO_REMOTE_DATABASE_FILENAME)) {
                             String fileID = f.getId();
-                            Logger.i("GoogleDriveUtil", "Found file %s as ID: %s", Consts.PASS_REPO_REMOTE_DATABASE_FILENAME, fileID);
+                            Logger.i("GoogleDriveUtil", "Found file %s as ID: %s", Consts.PASS_REPO_REMOTE_DATABASE_FILENAME,
+                                    fileID);
                             savePassRepoFileID(fileID);
                             callback.onSuccess();
                             return;
@@ -189,7 +123,8 @@ public class GoogleDriveUtil {
             }
         }).start();
     }
-    
+
+    // Asynchronously downloads the given fileID to the disk (hard-coded path), and calls the given callback in the end.
     public void downloadPassRepoFile(final String passRepoFileID, final GoogleDriveResultCallback callback) {
         Logger.i("GoogleDriveUtil", "Starting download of PassRepo file ID %s..", passRepoFileID);
 
@@ -204,13 +139,13 @@ public class GoogleDriveUtil {
                     callback.onError();
                     return;
                 }
-                 
+
                 try {
                     Logger.i("GoogleDriveUtil", "Sending GET request..");
 
                     final InputStream is = drive.getRequestFactory().buildGetRequest(new GenericUrl(f.getDownloadUrl()))
                             .execute().getContent();
-                    
+
                     Logger.i("GoogleDriveUtil", "Downloading result..");
 
                     // Read file from remote inputstream..
@@ -219,19 +154,20 @@ public class GoogleDriveUtil {
                             return new InputStreamReader(is);
                         }
                     });
-                    
+
                     Logger.i("GoogleDriveUtil", "Writing result to disk: " + result);
-                    
+
                     // Write file to local disk..
                     CharStreams.write(result, new OutputSupplier<OutputStreamWriter>() {
                         public OutputStreamWriter getOutput() throws IOException {
-                            return new OutputStreamWriter(context.openFileOutput(Consts.PASS_REPO_LOCAL_DATABASE_FILENAME, Context.MODE_PRIVATE), Charsets.UTF_8);
+                            return new OutputStreamWriter(context.openFileOutput(Consts.PASS_REPO_LOCAL_DATABASE_FILENAME,
+                                    Context.MODE_PRIVATE), Charsets.UTF_8);
                         }
                     });
-                    
+
                     Logger.i("GoogleDriveUtil", "Done downloading file to disk!");
                     callback.onSuccess();
-                    
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     Logger.i("GoogleDriveUtil", "Failed downloading file, clearing its ID just in case..");
@@ -242,37 +178,66 @@ public class GoogleDriveUtil {
         }).start();
     }
 
-    private void runThread(Runnable r) {
-        Thread t = new Thread(r);
-        t.start();
-        System.out.println("Waiting on thread..");
-        try {
-            t.join(20000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Done!");
-    }
+    public void uploadPassRepoFileToGoogleDrive(final java.io.File localPassRepoFile, final GoogleDriveResultCallback callback) {
+        Logger.i("GoogleDriveUtil", "Starting upload of PassRepo file to Google Drive..");
 
-    public void clearCache() {
-        try {
-            new SharedPreferencesCredentialStore(context).delete(null, null);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+        new Thread(new Runnable() {
+            public void run() {
+                File driveMetaData = new File();
+                driveMetaData.setTitle(Consts.PASS_REPO_REMOTE_DATABASE_FILENAME);
+                driveMetaData.setDescription("Pass Repo Storage");
+                driveMetaData.setMimeType("application/json");
 
-    public void authorizeIfNecessary() {
-        if (!isAuthorized()) {
-            authorize();
-        }
-    }
+                FileContent content = new FileContent("application/json", localPassRepoFile);
 
+                String existingPassRepoFileID = getPassRepoFileID();
+
+                if (existingPassRepoFileID == null) {
+                    Logger.i("GoogleDriveUtil", "Creating a new file (PassRepo file ID doesn't exist)..");
+                    
+                    File r = null;
+                    try {
+                        r = drive.files().insert(driveMetaData, content).execute();
+                    } catch (IOException e) {
+                        Logger.w("GoogleDriveUtil", "Failed uploading the file (connectivity/authentication issues?)");
+                        e.printStackTrace();
+                        callback.onError();
+                        return;
+                    }
+
+                    String newPassRepoFileID = r.getId();
+                    savePassRepoFileID(newPassRepoFileID);
+                    
+                    Logger.i("GoogleDriveUtil", "Successfully created a new file in Google Drive and saved its ID: %s",
+                            newPassRepoFileID);
+                    callback.onSuccess();
+
+                } else {
+                    Logger.i("GoogleDriveUtil", "Updating the remote file ID: %s", existingPassRepoFileID);
+                    
+                    try {
+                        drive.files().update(existingPassRepoFileID, driveMetaData, content).execute();
+                    } catch (IOException e) {
+                        Logger.i("GoogleDriveUtil", "Failed updating remote file %s, its ID may have been removed, clearing it..", existingPassRepoFileID);
+                        e.printStackTrace();
+                        clearPassRepoFileID();
+                        callback.onError();
+                        return;
+                    }
+                    
+                    Logger.i("GoogleDriveUtil", "Successfully updated the existing file in Google Drive: %s", existingPassRepoFileID);
+                    callback.onSuccess();
+                }
+            }
+        }).start();
+    }
+    
+    // Starts the Google OAuth authorization process.
     public void authorize() {
-        Logger.i("gdrive", "Access Token isn't saved yet, starting Google Authentication process..");
         context.startActivity(new Intent(context.getApplicationContext(), GoogleAuthActivity.class));
     }
 
+    // Checks if the Google OAuth credentials exist and are valid.
     public boolean isAuthorized() {
         try {
             Credential cred = PassRepoGoogleAuthorizationCodeFlow.getInstance(context.getApplicationContext()).loadCredential("");
@@ -290,6 +255,16 @@ public class GoogleDriveUtil {
 
             return true;
 
+        } catch (IOException e) {
+            // TODO
+            throw new RuntimeException(e);
+        }
+    }
+    
+    // Clears the authorization credentials.
+    public void clearAuthorizationCache() {
+        try {
+            new SharedPreferencesCredentialStore(context).delete(null, null);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
