@@ -3,7 +3,7 @@ package com.example.passrepo.auth;
 
 import android.content.Context;
 
-import com.example.passrepo.drive.Constants;
+import com.example.passrepo.Consts;
 import com.example.passrepo.store.SharedPreferencesCredentialStore;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.http.HttpTransport;
@@ -19,7 +19,7 @@ public class PassRepoGoogleAuthorizationCodeFlow {
             HttpTransport ht = new NetHttpTransport();
             JacksonFactory jsonF = new JacksonFactory();        
             instance = new GoogleAuthorizationCodeFlow.Builder(
-                    ht, jsonF, Constants.CLIENT_ID, Constants.CLIENT_SECRET, Constants.SCOPES)
+                    ht, jsonF, Consts.GOOGLE_AUTH_CLIENT_ID, Consts.GOOGLE_AUTH_CLIENT_SECRET, Consts.SCOPES)
                     .setCredentialStore(new SharedPreferencesCredentialStore(context)).build();
             
         }

@@ -124,7 +124,7 @@ public class GoogleDriveUtil {
         Runnable r = new Runnable() {
             public void run() {                
                 try {
-                    String fileId = Constants.FILE_ID_TEMP;
+                    String fileId = "";
                     Files.List request = drive.files().list();
 
                     boolean success = false;

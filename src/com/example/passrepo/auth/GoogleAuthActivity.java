@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.webkit.WebView;
 
-import com.example.passrepo.drive.Constants;
+import com.example.passrepo.Consts;
 import com.example.passrepo.util.Logger;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
@@ -30,7 +30,7 @@ public class GoogleAuthActivity extends Activity implements GoogleAuthWebViewCli
         setContentView(webview);
 
         final GoogleAuthorizationCodeFlow flow = PassRepoGoogleAuthorizationCodeFlow.getInstance(this);
-        GoogleAuthorizationCodeRequestUrl urlBuilder = flow.newAuthorizationUrl().setRedirectUri(Constants.REDIRECT_URI);
+        GoogleAuthorizationCodeRequestUrl urlBuilder = flow.newAuthorizationUrl().setRedirectUri(Consts.REDIRECT_URI);
         webview.setWebViewClient(new GoogleAuthWebViewClient(flow, this));        
         webview.loadUrl(urlBuilder.build());
         setTitle("Login to continue!");

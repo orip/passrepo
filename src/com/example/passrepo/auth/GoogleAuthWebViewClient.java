@@ -7,7 +7,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.example.passrepo.drive.Constants;
+import com.example.passrepo.Consts;
 import com.example.passrepo.util.QueryStringParser;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
@@ -35,7 +35,7 @@ public class GoogleAuthWebViewClient extends WebViewClient {
     public void onPageFinished(WebView view, final String url) {
         System.out.println("page finished");
         
-        if (!url.startsWith("http://local")) {
+        if (!url.startsWith(Consts.REDIRECT_URI)) {
             super.onPageFinished(view, url);
             return;
         }
@@ -58,7 +58,7 @@ public class GoogleAuthWebViewClient extends WebViewClient {
                 String authorizationCode = extractParamFromUrl(url, "code");
                 
                 GoogleAuthorizationCodeTokenRequest tokenRequest =
-                        flow.newTokenRequest(authorizationCode).setRedirectUri(Constants.REDIRECT_URI);
+                        flow.newTokenRequest(authorizationCode).setRedirectUri(Consts.REDIRECT_URI);
 
                 try {
                     GoogleTokenResponse gtr = tokenRequest.execute(); 
