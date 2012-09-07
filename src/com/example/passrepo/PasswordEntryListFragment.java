@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.example.passrepo.dummy.DummyContent;
+import com.example.passrepo.model.Model;
 import com.example.passrepo.model.PasswordEntry;
 
 public class PasswordEntryListFragment extends ListFragment {
@@ -36,7 +36,7 @@ public class PasswordEntryListFragment extends ListFragment {
         setListAdapter(new ArrayAdapter<PasswordEntry>(getActivity(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
-                DummyContent.model.passwordEntries));
+                Model.currentModel.passwordEntries));
     }
 
     @Override
@@ -67,7 +67,7 @@ public class PasswordEntryListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
-        mCallbacks.onItemSelected(DummyContent.model.passwordEntries.get(position).id);
+        mCallbacks.onItemSelected(Model.currentModel.passwordEntries.get(position).id);
     }
 
     @Override

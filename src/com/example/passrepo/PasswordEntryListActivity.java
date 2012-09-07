@@ -2,6 +2,7 @@ package com.example.passrepo;
 
 import android.app.AlertDialog;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -29,20 +30,12 @@ import com.google.common.base.Charsets;
 
 public class PasswordEntryListActivity extends FragmentActivity implements PasswordEntryListFragment.Callbacks {
     private boolean mTwoPane;
-    
+
     private static final boolean TEST_ENCRYPTION = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        setContentView(R.layout.activity_passwordentry_list);
-
-        if (findViewById(R.id.passwordentry_detail_container) != null) {
-            mTwoPane = true;
-            ((PasswordEntryListFragment) getSupportFragmentManager().findFragmentById(R.id.passwordentry_list))
-                    .setActivateOnItemClick(true);
-        }
 
         testDriveEncryption();
     }
@@ -57,7 +50,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             startActivity(detailIntent);
         }
     }
-    
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -67,24 +60,39 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     protected void onResume() {
         super.onResume();
         testDriveEncryption();
-        
-        // TODO: Start load indicator.
 
-        IO.startSyncFromGoogleDriveToDisk(this, new Runnable() {
-            @Override
-            public void run() {
-                Logger.i("PasswirdEntryListActivity", "Done Syncing from Drive, loading model from disk..");
-                IO.loadModelFromDisk(PasswordEntryListActivity.this);
+        // Once we have an updated model, set the passwords list content view. Avoid it if the list is already set.
+        if (Model.currentModel != null && findViewById(android.R.id.content) != null) {
+            setContentView(R.layout.activity_passwordentry_list);
+            if (findViewById(R.id.passwordentry_detail_container) != null) {
+                mTwoPane = true;
+                ((PasswordEntryListFragment) getSupportFragmentManager().findFragmentById(R.id.passwordentry_list))
+                        .setActivateOnItemClick(true);
             }
-        });
-    }
-    
-    
-    @Override
-    protected void onPause() {
-        super.onPause();
-        //if (googleDriveUtil.isAuthorized())
-        //    IO.saveModel(this);
+            
+        } else {
+            final ProgressDialog loadingDialog = new ProgressDialog(this);
+            loadingDialog.setMessage("Loading Passwords..");
+            loadingDialog.setCancelable(false);
+            loadingDialog.show();
+            
+            IO.startSyncFromGoogleDriveToDisk(this, new Runnable() {
+                @Override
+                public void run() {
+                    Logger.i("PasswordEntryListActivity", "Done Syncing from Drive, loading model from disk..");
+                    IO.loadModelFromDisk(PasswordEntryListActivity.this);
+
+                    Logger.i("PasswordEntryListActivity", "Upadting UI..");
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            loadingDialog.dismiss();
+                            startActivity(getIntent());
+                            finish();
+                        }
+                    });
+                }
+            });
+        }
     }
 
     @SuppressWarnings("unused")

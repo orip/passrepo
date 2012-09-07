@@ -25,7 +25,7 @@ import com.google.common.io.OutputSupplier;
 
 public class IO {
     
-    private final static boolean DEBUG_DO_NOT_ENCRYPT = true;
+    private final static boolean DEBUG_DO_NOT_ENCRYPT = false;
     
     public static String modelToEncryptedString(Model model) {
         if (DEBUG_DO_NOT_ENCRYPT) {
@@ -40,12 +40,15 @@ public class IO {
 
     public static Model modelFromEncryptedString(String encryptedString, byte[] key) {
         if (DEBUG_DO_NOT_ENCRYPT) {
-            return GsonHelper.customGson.fromJson(encryptedString, Model.class);
+            Model result = GsonHelper.customGson.fromJson(encryptedString, Model.class);
+            result.populateIdsToPasswordEntriesMap();
+            return result;
         }
 
         EncryptedFile encryptedFile = GsonHelper.customGson.fromJson(encryptedString, EncryptedFile.class);
         String modelJson = new String(Encryption.decrypt(encryptedFile.cipherText, key), Charsets.UTF_8);
         Model result = GsonHelper.customGson.fromJson(modelJson, Model.class);
+        result.populateIdsToPasswordEntriesMap();   // TODO: For some reason isn't called by the GsonHelper. Temporary workaround..
         result.key = key;
         result.scryptParameters = encryptedFile.scryptParameters;
         return result;

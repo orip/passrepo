@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.passrepo.dummy.DummyContent;
+import com.example.passrepo.model.Model;
 import com.example.passrepo.model.PasswordEntry;
 import com.example.passrepo.util.Logger;
 import com.google.common.base.Preconditions;
@@ -21,7 +21,7 @@ public abstract class PasswordEntryDetailFragmentBase extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Preconditions.checkState(getArguments().containsKey(Consts.ARG_ITEM_ID));
-        mItem = DummyContent.model.getPasswordEntry(getArguments().getString(Consts.ARG_ITEM_ID));
+        mItem = Model.currentModel.getPasswordEntry(getArguments().getString(Consts.ARG_ITEM_ID));
     }
 
     public static void switchDetailFragment(FragmentActivity activity, String itemId, Fragment detailFragment) {

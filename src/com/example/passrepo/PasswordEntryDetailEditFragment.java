@@ -29,7 +29,7 @@ public class PasswordEntryDetailEditFragment extends PasswordEntryDetailFragment
             public void run() {
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(activity, "Password updated", Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, "Updated", Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -51,7 +51,6 @@ public class PasswordEntryDetailEditFragment extends PasswordEntryDetailFragment
         ((Button) rootView.findViewById(R.id.update_button)).setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 saveEntry();
-                Toast.makeText(getActivity(), "Updated", Toast.LENGTH_SHORT).show();
                 switchToViewMode();
             }
         });

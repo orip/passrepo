@@ -11,17 +11,18 @@ public class Model {
     public transient byte[] key;
     public transient ScryptParameters scryptParameters;
     
-    private Map<String, PasswordEntry> idsToPasswordEntriesMap;
+    public Map<String, PasswordEntry> idsToPasswordEntriesMap;
 
     public Model(byte[] key, ScryptParameters scryptParameters, List<PasswordEntry> passwordEntries) {
         this.key = key;
         this.scryptParameters = scryptParameters;
         this.passwordEntries = passwordEntries;
         this.idsToPasswordEntriesMap = Maps.newHashMap();
-        populateIdsToPasswordEntriesMap(passwordEntries);
+        populateIdsToPasswordEntriesMap();
     }
 
-    private void populateIdsToPasswordEntriesMap(List<PasswordEntry> passwordEntries) {
+    // TODO: Change to private.
+    public void populateIdsToPasswordEntriesMap() {
         long index = 0;
         for (PasswordEntry passwordEntry : passwordEntries) {
             passwordEntry.id = Long.toString(index++);
