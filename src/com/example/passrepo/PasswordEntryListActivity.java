@@ -49,9 +49,6 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
         }
 
         testDriveEncryption();
-
-        if (Model.currentModel == null)
-            IO.loadModel(this);
     }
 
     @Override
@@ -74,8 +71,16 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     protected void onResume() {
         super.onResume();
         testDriveEncryption();
+        
+        // TODO: Start load indicator.
 
-        IO.loadModel(this);
+        IO.startSyncFromDriveToDisk(this, new Runnable() {
+            @Override
+            public void run() {
+                Logger.i("PasswirdEntryListActivity", "Done Syncing from Drive, loading model from disk..");
+                IO.loadModelFromDisk(PasswordEntryListActivity.this);
+            }
+        });
     }
     
     

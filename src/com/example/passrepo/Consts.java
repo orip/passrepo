@@ -10,9 +10,6 @@ public class Consts {
     public static final String ARG_ITEM_ID = "item_id";
     public static final int COPY_PASSWORD_NOTIFICATION_ID = 1;
     
-    //static public final String CLIENT_ID = "962290543322.apps.googleusercontent.com";    
-    //static public final String CLIENT_SECRET = "McwLu2ChbXhVZd02c4C3SZg5";
-    
     // Google API Console => API Access => Client ID for web applications => Client ID
     static public final String GOOGLE_AUTH_CLIENT_ID = "391091595646.apps.googleusercontent.com";
     
@@ -24,4 +21,7 @@ public class Consts {
     
     // Google API Console => API Access => Client ID for web applications => Redirect URIs
     static public final String REDIRECT_URI = "http://localhost/oauth2callback";
+    
+    static public final String PASS_REPO_REMOTE_DATABASE_FILENAME = "PassRepoStorage";
+    static public final String PASS_REPO_LOCAL_DATABASE_FILENAME = "PassRepoStorage";
 }

@@ -9,6 +9,7 @@ import android.content.Context;
 
 import com.example.passrepo.crypto.Encryption;
 import com.example.passrepo.crypto.Encryption.CipherText;
+import com.example.passrepo.drive.GoogleDriveResultCallback;
 import com.example.passrepo.drive.GoogleDriveUtil;
 import com.example.passrepo.dummy.DummyContent;
 import com.example.passrepo.model.Model;
@@ -39,27 +40,66 @@ public class IO {
         return result;
     }
 
-    public static void loadModel(final Context context) {
-        Logger.i("IO", "loading model");
-
+    public static void loadModelFromDisk(final Context context) {
+        String fileContents;
+        
         try {
-            String fileContents = CharStreams.toString(new InputSupplier<InputStreamReader>() {
+            fileContents = CharStreams.toString(new InputSupplier<InputStreamReader>() {
                 public InputStreamReader getInput() throws IOException {
                     return new InputStreamReader(context.openFileInput(PASSWORD_DATABASE_FILENAME), Charsets.UTF_8);
                 }
             });
-
-            GoogleDriveUtil gdu = new GoogleDriveUtil(context.getApplicationContext());
-            if (gdu.isAuthorized()) {
-                fileContents = gdu.download();
-            }
-            Model.currentModel = IO.modelFromEncryptedString(fileContents, DummyContent.dummyKey);
-            Logger.i("IO", "sucessfully loaded model from disk");
-
         } catch (IOException e) {
-            Model.currentModel = DummyContent.model;
-            Logger.i("IO", "loaded dummy model");
+            throw new RuntimeException(e);
         }
+
+        Model.currentModel = IO.modelFromEncryptedString(fileContents, DummyContent.dummyKey);
+        Logger.i("IO", "sucessfully loaded model from disk");
+    }
+
+    public static void startSyncFromDriveToDisk(final Context context, final Runnable doneCallback) {
+        Logger.i("IO", "loading model");
+
+        final GoogleDriveUtil gdu = new GoogleDriveUtil(context.getApplicationContext());
+        if (!gdu.isAuthorized()) {
+            Logger.w("IO", "Isn't authorized yet, aborting load");
+            doneCallback.run();
+        }
+
+        // Get the saved file ID or find it remotely.
+        final String passRepoFileID = gdu.getPassRepoFileID();
+
+        if (passRepoFileID != null) {
+            downloadPassRepoFile(gdu, passRepoFileID, doneCallback);
+
+        } else {
+            gdu.findAndSavePassRepoFileID(new GoogleDriveResultCallback() {
+                @Override
+                public void onSuccess() {
+                    downloadPassRepoFile(gdu, passRepoFileID, doneCallback);
+                }
+
+                @Override
+                public void onError() {
+                    doneCallback.run();
+                }
+            });
+        }
+    }
+
+    private static void downloadPassRepoFile(final GoogleDriveUtil gdu, final String fileID, final Runnable doneCallback) {
+        gdu.downloadPassRepoFile(fileID, new GoogleDriveResultCallback() {
+            @Override
+            public void onSuccess() {
+                doneCallback.run();
+            }
+
+            @Override
+            public void onError() {
+                doneCallback.run();
+            }
+        });
+
     }
 
     public static void saveModel(final Context context) {
@@ -72,9 +112,9 @@ public class IO {
             File f = new File(new File("/mnt/sdcard"), PASSWORD_DATABASE_FILENAME);
             Files.write(IO.modelToEncryptedString(Model.currentModel), f, Charsets.UTF_8);
             Logger.i("IO", "saved model to disk");
-            new GoogleDriveUtil(context.getApplicationContext()).create(f);
-
-            Logger.i("IO", "saved model to drive!!!");
+            
+            //new GoogleDriveUtil(context.getApplicationContext()).create(f);
+            //Logger.i("IO", "saved model to drive!!!");
         } catch (IOException e) {
             Logger.i("IO", "error saving model to disk");
             throw new RuntimeException(e);
