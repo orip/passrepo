@@ -33,7 +33,7 @@ public class GoogleAuthActivity extends Activity implements GoogleAuthWebViewCli
         GoogleAuthorizationCodeRequestUrl urlBuilder = flow.newAuthorizationUrl().setRedirectUri(Consts.REDIRECT_URI);
         webview.setWebViewClient(new GoogleAuthWebViewClient(flow, this));        
         webview.loadUrl(urlBuilder.build());
-        setTitle("Login to continue!");
+        setTitle("Login");
     }
     
     @Override
