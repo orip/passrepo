@@ -128,7 +128,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
                 public void onClick(DialogInterface dialog, int which) {
                     String password = ((EditText) textEntryView.findViewById(R.id.password_entry_1)).getText().toString();
                     Model.currentModel.key = PasswordHasher.hash(password, Model.currentModel.scryptParameters);
-                    IO.saveModel(PasswordEntryListActivity.this, new Runnable() {
+                    IO.saveModelAndStartSyncFromDiskToGoogleDrive(PasswordEntryListActivity.this, new Runnable() {
                         public void run() {
                             PasswordEntryListActivity.this.runOnUiThread(new Runnable() {
                                 public void run() {

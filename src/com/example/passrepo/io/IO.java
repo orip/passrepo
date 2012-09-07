@@ -24,7 +24,14 @@ import com.google.common.io.InputSupplier;
 import com.google.common.io.OutputSupplier;
 
 public class IO {
+    
+    private final static boolean DEBUG_DO_NOT_ENCRYPT = true;
+    
     public static String modelToEncryptedString(Model model) {
+        if (DEBUG_DO_NOT_ENCRYPT) {
+            return GsonHelper.customGson.toJson(model);
+        }
+        
         byte[] plainText = GsonHelper.customGson.toJson(model).getBytes(Charsets.UTF_8);
         CipherText cipherText = Encryption.encrypt(plainText, model.key);
         EncryptedFile encryptedFile = new EncryptedFile(model.scryptParameters, cipherText);
@@ -32,6 +39,10 @@ public class IO {
     }
 
     public static Model modelFromEncryptedString(String encryptedString, byte[] key) {
+        if (DEBUG_DO_NOT_ENCRYPT) {
+            return GsonHelper.customGson.fromJson(encryptedString, Model.class);
+        }
+
         EncryptedFile encryptedFile = GsonHelper.customGson.fromJson(encryptedString, EncryptedFile.class);
         String modelJson = new String(Encryption.decrypt(encryptedFile.cipherText, key), Charsets.UTF_8);
         Model result = GsonHelper.customGson.fromJson(modelJson, Model.class);
@@ -116,7 +127,7 @@ public class IO {
 
     }
 
-    public static void saveModel(final Context context, final Runnable doneCallback) {
+    public static void saveModelAndStartSyncFromDiskToGoogleDrive(final Context context, final Runnable doneCallback) {
         // Save the encrypted result to the local disk.
         File f;
         try {

@@ -25,7 +25,7 @@ public class PasswordEntryDetailEditFragment extends PasswordEntryDetailFragment
         mItem.userName = ((EditText) getView().findViewById(R.id.userName)).getText().toString();
         mItem.password = ((EditText) getView().findViewById(R.id.password)).getText().toString();
         final Activity activity = getActivity();
-        IO.saveModel(activity, new Runnable() {
+        IO.saveModelAndStartSyncFromDiskToGoogleDrive(activity, new Runnable() {
             public void run() {
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
