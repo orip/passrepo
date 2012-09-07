@@ -128,6 +128,21 @@ public class GoogleDriveUtil {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(PASS_REPO_FILE_ID, null);
     }
+    
+    private void savePassRepoFileID(String fileID) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Editor editor = prefs.edit();
+        editor.putString(PASS_REPO_FILE_ID, fileID);
+        editor.commit();
+    }
+    
+    // Returns the saved FileID if it exists.
+    private void clearPassRepoFileID() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Editor editor = prefs.edit();
+        editor.remove(PASS_REPO_FILE_ID);
+        editor.commit();
+    }
 
     // Lists the files of the user in search of the PassRepo storage file, and saves its ID on the device.
     public void findAndSavePassRepoFileID(final GoogleDriveResultCallback callback) {
@@ -174,23 +189,23 @@ public class GoogleDriveUtil {
             }
         }).start();
     }
-
-    private void savePassRepoFileID(String fileID) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Editor editor = prefs.edit();
-        editor.putString(PASS_REPO_FILE_ID, fileID);
-        editor.commit();
-    }
     
     public void downloadPassRepoFile(final String passRepoFileID, final GoogleDriveResultCallback callback) {
         Logger.i("GoogleDriveUtil", "Starting download of PassRepo file ID %s..", passRepoFileID);
 
         new Thread(new Runnable() {
             public void run() {
+                File f;
                 try {
-                    // TODO: Handle case in which file ID doesn't exist anymore.
-                    File f = drive.files().get(passRepoFileID).execute();
-                    
+                    f = drive.files().get(passRepoFileID).execute();
+                } catch (IOException e) {
+                    Logger.i("GoogleDriveUtil", "PassRepo file ID was not found, probably deleted or moved. Clearing ID..");
+                    clearPassRepoFileID();
+                    callback.onError();
+                    return;
+                }
+                 
+                try {
                     Logger.i("GoogleDriveUtil", "Sending GET request..");
 
                     final InputStream is = drive.getRequestFactory().buildGetRequest(new GenericUrl(f.getDownloadUrl()))
@@ -205,7 +220,7 @@ public class GoogleDriveUtil {
                         }
                     });
                     
-                    Logger.i("GoogleDriveUtil", "Writing result to disk..");
+                    Logger.i("GoogleDriveUtil", "Writing result to disk: " + result);
                     
                     // Write file to local disk..
                     CharStreams.write(result, new OutputSupplier<OutputStreamWriter>() {
@@ -219,6 +234,8 @@ public class GoogleDriveUtil {
                     
                 } catch (IOException e) {
                     e.printStackTrace();
+                    Logger.i("GoogleDriveUtil", "Failed downloading file, clearing its ID just in case..");
+                    clearPassRepoFileID();
                     callback.onError();
                 }
             }
