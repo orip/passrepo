@@ -7,6 +7,7 @@ import java.io.OutputStreamWriter;
 
 import android.content.Context;
 
+import com.example.passrepo.Consts;
 import com.example.passrepo.crypto.Encryption;
 import com.example.passrepo.crypto.Encryption.CipherText;
 import com.example.passrepo.drive.GoogleDriveResultCallback;
@@ -22,8 +23,6 @@ import com.google.common.io.InputSupplier;
 import com.google.common.io.OutputSupplier;
 
 public class IO {
-    private static final String PASSWORD_DATABASE_FILENAME = "password_database.json";
-
     public static String modelToEncryptedString(Model model) {
         byte[] plainText = GsonHelper.customGson.toJson(model).getBytes(Charsets.UTF_8);
         CipherText cipherText = Encryption.encrypt(plainText, model.key);
@@ -46,7 +45,7 @@ public class IO {
         try {
             fileContents = CharStreams.toString(new InputSupplier<InputStreamReader>() {
                 public InputStreamReader getInput() throws IOException {
-                    return new InputStreamReader(context.openFileInput(PASSWORD_DATABASE_FILENAME), Charsets.UTF_8);
+                    return new InputStreamReader(context.openFileInput(Consts.PASS_REPO_LOCAL_DATABASE_FILENAME), Charsets.UTF_8);
                 }
             });
         } catch (IOException e) {
@@ -57,45 +56,55 @@ public class IO {
         Logger.i("IO", "sucessfully loaded model from disk");
     }
 
-    public static void startSyncFromDriveToDisk(final Context context, final Runnable doneCallback) {
-        Logger.i("IO", "loading model");
+    public static void startSyncFromGoogleDriveToDisk(final Context context, final Runnable doneCallback) {
+        Logger.i("IO", "startSyncFromGoogleDriveToDisk");
 
         final GoogleDriveUtil gdu = new GoogleDriveUtil(context.getApplicationContext());
         if (!gdu.isAuthorized()) {
-            Logger.w("IO", "Isn't authorized yet, aborting load");
+            Logger.w("IO", "Isn't authorized yet, aborting sync");
             doneCallback.run();
         }
 
         // Get the saved file ID or find it remotely.
-        final String passRepoFileID = gdu.getPassRepoFileID();
+        String passRepoFileID = gdu.getPassRepoFileID();
 
         if (passRepoFileID != null) {
-            downloadPassRepoFile(gdu, passRepoFileID, doneCallback);
+            startDownloadFromGoogleDrive(gdu, passRepoFileID, doneCallback);
 
         } else {
             gdu.findAndSavePassRepoFileID(new GoogleDriveResultCallback() {
                 @Override
                 public void onSuccess() {
-                    downloadPassRepoFile(gdu, passRepoFileID, doneCallback);
+                    String passRepoFileID = gdu.getPassRepoFileID();
+                    if (passRepoFileID != null) {
+                        Logger.i("IO", "Got the Remote File ID, Starting the download..");
+                        startDownloadFromGoogleDrive(gdu, passRepoFileID, doneCallback);
+                    } else {
+                        Logger.i("IO", "Remote file doesn't exist, aborting download.");
+                        doneCallback.run();
+                    }
                 }
 
                 @Override
                 public void onError() {
+                    Logger.w("IO", "Failed fetching the remote file ID from Google Drive (connectivity errors? Authentication Problem?)..");
                     doneCallback.run();
                 }
             });
         }
     }
 
-    private static void downloadPassRepoFile(final GoogleDriveUtil gdu, final String fileID, final Runnable doneCallback) {
+    private static void startDownloadFromGoogleDrive(final GoogleDriveUtil gdu, final String fileID, final Runnable doneCallback) {
         gdu.downloadPassRepoFile(fileID, new GoogleDriveResultCallback() {
             @Override
             public void onSuccess() {
+                Logger.i("IO", "Successfully downloaded the remote file to the disk.");
                 doneCallback.run();
             }
 
             @Override
             public void onError() {
+                Logger.w("IO", "Failed downloaded the remote file to the disk..");
                 doneCallback.run();
             }
         });
@@ -106,10 +115,10 @@ public class IO {
         try {
             CharStreams.write(IO.modelToEncryptedString(Model.currentModel), new OutputSupplier<OutputStreamWriter>() {
                 public OutputStreamWriter getOutput() throws IOException {
-                    return new OutputStreamWriter(context.openFileOutput(PASSWORD_DATABASE_FILENAME, Context.MODE_PRIVATE));
+                    return new OutputStreamWriter(context.openFileOutput(Consts.PASS_REPO_LOCAL_DATABASE_FILENAME, Context.MODE_PRIVATE));
                 }
             });
-            File f = new File(new File("/mnt/sdcard"), PASSWORD_DATABASE_FILENAME);
+            File f = new File(new File("/mnt/sdcard"), Consts.PASS_REPO_LOCAL_DATABASE_FILENAME);
             Files.write(IO.modelToEncryptedString(Model.currentModel), f, Charsets.UTF_8);
             Logger.i("IO", "saved model to disk");
             

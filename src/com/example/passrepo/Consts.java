@@ -22,6 +22,6 @@ public class Consts {
     // Google API Console => API Access => Client ID for web applications => Redirect URIs
     static public final String REDIRECT_URI = "http://localhost/oauth2callback";
     
-    static public final String PASS_REPO_REMOTE_DATABASE_FILENAME = "PassRepoStorage";
-    static public final String PASS_REPO_LOCAL_DATABASE_FILENAME = "PassRepoStorage";
+    static public final String PASS_REPO_REMOTE_DATABASE_FILENAME = "PassRepoStorage.json";
+    static public final String PASS_REPO_LOCAL_DATABASE_FILENAME = "PassRepoStorage.json";
 }

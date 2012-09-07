@@ -38,13 +38,13 @@ public class GoogleAuthActivity extends Activity implements GoogleAuthWebViewCli
     
     @Override
     public void onSuccess() {
-        Logger.i("GoogleAuthActivity", "onSuccess!");
+        Logger.i("GoogleAuthActivity", "Successfully Logged In!");
         finish();
     }
 
     @Override
     public void onError() {
-        Logger.w("GoogleAuthActivity", "onError!");
+        Logger.w("GoogleAuthActivity", "Error occurred on login..");
     }
     
 }

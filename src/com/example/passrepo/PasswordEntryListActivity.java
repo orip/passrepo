@@ -20,7 +20,6 @@ import com.example.passrepo.crypto.Encryption;
 import com.example.passrepo.crypto.Encryption.CipherText;
 import com.example.passrepo.crypto.PasswordHasher;
 import com.example.passrepo.crypto.PasswordHasher.ScryptParameters;
-import com.example.passrepo.drive.GoogleDriveUtil;
 import com.example.passrepo.dummy.DummyContent;
 import com.example.passrepo.io.IO;
 import com.example.passrepo.model.Model;
@@ -30,15 +29,10 @@ import com.google.common.base.Charsets;
 
 public class PasswordEntryListActivity extends FragmentActivity implements PasswordEntryListFragment.Callbacks {
     private boolean mTwoPane;
-    
-    private GoogleDriveUtil googleDriveUtil;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        googleDriveUtil = new GoogleDriveUtil(this);
-        googleDriveUtil.authorize();
         
         setContentView(R.layout.activity_passwordentry_list);
 
@@ -74,7 +68,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
         
         // TODO: Start load indicator.
 
-        IO.startSyncFromDriveToDisk(this, new Runnable() {
+        IO.startSyncFromGoogleDriveToDisk(this, new Runnable() {
             @Override
             public void run() {
                 Logger.i("PasswirdEntryListActivity", "Done Syncing from Drive, loading model from disk..");
