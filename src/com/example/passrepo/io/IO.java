@@ -53,6 +53,7 @@ public class IO {
 
     public static void loadModelFromDisk(final Context context) {
         try {
+            Logger.i("IO", "lading model from disk..");
             String fileContents = CharStreams.toString(new InputSupplier<InputStreamReader>() {
                 public InputStreamReader getInput() throws IOException {
                     return new InputStreamReader(context.openFileInput(Consts.PASS_REPO_LOCAL_DATABASE_FILENAME), Charsets.UTF_8);
@@ -60,7 +61,7 @@ public class IO {
             });
             
             Model.currentModel = IO.modelFromEncryptedString(fileContents, DummyContent.dummyKey);
-            Logger.i("IO", "sucessfully loaded model from disk");
+            Logger.i("IO", "sucessfully loaded model from disk. Results are: " + fileContents);
             
         } catch (FileNotFoundException e) {
             // Model doesn't exist on disk (probably first time install), use the dummy instead.
