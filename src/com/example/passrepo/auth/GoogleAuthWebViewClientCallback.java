@@ -1,4 +1,4 @@
-package com.example.passrepo;
+package com.example.passrepo.auth;
 
 public interface GoogleAuthWebViewClientCallback {
     

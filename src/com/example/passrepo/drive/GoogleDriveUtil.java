@@ -1,4 +1,4 @@
-package com.example.passrepo.gdrive;
+package com.example.passrepo.drive;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,9 +8,8 @@ import java.util.Date;
 import android.content.Context;
 import android.content.Intent;
 
-import com.example.passrepo.GoogleAuthActivity;
-import com.example.passrepo.PassRepoGoogleAuthorizationCodeFlow;
-import com.example.passrepo.drive.Constants;
+import com.example.passrepo.auth.GoogleAuthActivity;
+import com.example.passrepo.auth.PassRepoGoogleAuthorizationCodeFlow;
 import com.example.passrepo.store.SharedPreferencesCredentialStore;
 import com.example.passrepo.util.Logger;
 import com.google.api.client.auth.oauth2.Credential;
@@ -78,7 +77,7 @@ public class GoogleDriveUtil {
                 System.out.println("id: " + r.getId());
                 
                 try {
-                    File f = drive.files().get(r.getId()).execute();
+                    drive.files().get(r.getId()).execute();
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

@@ -1,4 +1,4 @@
-package com.example.passrepo;
+package com.example.passrepo.auth;
 
 import java.io.IOException;
 
@@ -8,7 +8,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.example.passrepo.drive.Constants;
-import com.example.passrepo.util.Logger;
 import com.example.passrepo.util.QueryStringParser;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;

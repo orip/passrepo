@@ -1,4 +1,4 @@
-package com.example.passrepo;
+package com.example.passrepo.auth;
 
 
 import android.content.Context;
