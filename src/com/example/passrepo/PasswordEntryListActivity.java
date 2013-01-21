@@ -16,14 +16,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.example.passrepo.crypto.Encryption;
 import com.example.passrepo.crypto.Encryption.CipherText;
 import com.example.passrepo.crypto.PasswordHasher;
 import com.example.passrepo.crypto.PasswordHasher.ScryptParameters;
 import com.example.passrepo.dummy.DummyContent;
 import com.example.passrepo.io.IO;
-import com.example.passrepo.io.RealGoogleDriveIO;
+import com.example.passrepo.io.StubGoogleDriveIO;
 import com.example.passrepo.model.Model;
 import com.example.passrepo.util.GsonHelper;
 import com.example.passrepo.util.Logger;
@@ -77,7 +76,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             loadingDialog.setCancelable(false);
             loadingDialog.show();
             
-            new RealGoogleDriveIO(this).startSyncFromGoogleDriveToDisk(new Runnable() {
+            new StubGoogleDriveIO(this).startSyncFromGoogleDriveToDisk(new Runnable() {
                 @Override
                 public void run() {
                     Logger.i("PasswordEntryListActivity", "Done Syncing from Drive, loading model from disk..");
@@ -137,7 +136,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
                 public void onClick(DialogInterface dialog, int which) {
                     String password = ((EditText) textEntryView.findViewById(R.id.password_entry_1)).getText().toString();
                     Model.currentModel.key = PasswordHasher.hash(password, Model.currentModel.scryptParameters);
-                    new RealGoogleDriveIO(PasswordEntryListActivity.this).saveModelAndStartSyncFromDiskToGoogleDrive(new Runnable() {
+                    new StubGoogleDriveIO(PasswordEntryListActivity.this).saveModelAndStartSyncFromDiskToGoogleDrive(new Runnable() {
                         public void run() {
                             PasswordEntryListActivity.this.runOnUiThread(new Runnable() {
                                 public void run() {
