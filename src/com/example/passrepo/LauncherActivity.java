@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.passrepo.drive.GoogleDriveUtil;
+import com.example.passrepo.drive.RealGoogleDriveUtil;
 import com.example.passrepo.util.Logger;
 
 public class LauncherActivity extends Activity {
@@ -15,7 +16,7 @@ public class LauncherActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        googleDriveUtil = new GoogleDriveUtil(this);
+        googleDriveUtil = new RealGoogleDriveUtil(this);
         
         //setContentView(R.layout.activity_passwordentry_list);
     }

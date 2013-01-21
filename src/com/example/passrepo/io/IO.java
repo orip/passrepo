@@ -13,6 +13,7 @@ import com.example.passrepo.crypto.Encryption;
 import com.example.passrepo.crypto.Encryption.CipherText;
 import com.example.passrepo.drive.GoogleDriveResultCallback;
 import com.example.passrepo.drive.GoogleDriveUtil;
+import com.example.passrepo.drive.RealGoogleDriveUtil;
 import com.example.passrepo.dummy.DummyContent;
 import com.example.passrepo.model.Model;
 import com.example.passrepo.util.GsonHelper;
@@ -79,7 +80,7 @@ public class IO {
     public static void startSyncFromGoogleDriveToDisk(final Context context, final Runnable doneCallback) {
         Logger.i("IO", "startSyncFromGoogleDriveToDisk");
 
-        final GoogleDriveUtil gdu = new GoogleDriveUtil(context.getApplicationContext());
+        final GoogleDriveUtil gdu = new RealGoogleDriveUtil(context.getApplicationContext());
         if (!gdu.isAuthorized()) {
             Logger.w("IO", "Google Drive isn't authorized yet for some reason, aborting sync");
             doneCallback.run();
@@ -150,14 +151,14 @@ public class IO {
         }
         
         // Start the asynchronous upload of the local file to Google Drive.
-        final GoogleDriveUtil gdu = new GoogleDriveUtil(context.getApplicationContext());
+        final GoogleDriveUtil gdu = new RealGoogleDriveUtil(context.getApplicationContext());
         if (!gdu.isAuthorized()) {
             Logger.w("IO", "Google Drive isn't authorized yet for some reason, aborting upload sync");
             doneCallback.run();
             return;
         }
         
-        new GoogleDriveUtil(context.getApplicationContext()).uploadPassRepoFileToGoogleDrive( 
+        new RealGoogleDriveUtil(context.getApplicationContext()).uploadPassRepoFileToGoogleDrive(
                 f, new GoogleDriveResultCallback() {
             public void onSuccess() {
                 Logger.i("IO", "Successfully uploaded the local file to Google Drive.");
