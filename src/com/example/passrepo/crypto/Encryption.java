@@ -9,7 +9,7 @@ import javax.crypto.spec.SecretKeySpec;
 import com.google.common.base.Preconditions;
 
 public class Encryption {
-    private static final int REQURIED_KEY_LENGTH_IN_BITS = 256;
+    private static final int REQUIRED_KEY_LENGTH_IN_BITS = 256;
     public static class CipherText {
         public final byte[] bytes;
         public final byte[] iv;
@@ -23,7 +23,7 @@ public class Encryption {
 
     public static CipherText encrypt(byte[] plainText, byte[] key) {
         try {
-            Preconditions.checkArgument(key.length == REQURIED_KEY_LENGTH_IN_BITS / 8);
+            Preconditions.checkArgument(key.length == REQUIRED_KEY_LENGTH_IN_BITS / 8);
             Cipher cipher = Cipher.getInstance("AES/CTR/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"));
             byte[] cipherText = cipher.doFinal(plainText);
@@ -35,7 +35,7 @@ public class Encryption {
 
     public static byte[] decrypt(CipherText cipherText, byte[] key) {
         try {
-            Preconditions.checkArgument(key.length == REQURIED_KEY_LENGTH_IN_BITS / 8);
+            Preconditions.checkArgument(key.length == REQUIRED_KEY_LENGTH_IN_BITS / 8);
             Cipher cipher = Cipher.getInstance("AES/CTR/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), new IvParameterSpec(cipherText.iv));
             return cipher.doFinal(cipherText.bytes);
