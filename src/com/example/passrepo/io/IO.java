@@ -80,7 +80,7 @@ public class IO {
     public static void startSyncFromGoogleDriveToDisk(final Context context, final Runnable doneCallback) {
         Logger.i("IO", "startSyncFromGoogleDriveToDisk");
 
-        final GoogleDriveUtil gdu = new RealGoogleDriveUtil(context.getApplicationContext());
+        final GoogleDriveUtil gdu = getGoogleDriveUtil(context);
         if (!gdu.isAuthorized()) {
             Logger.w("IO", "Google Drive isn't authorized yet for some reason, aborting sync");
             doneCallback.run();
@@ -113,6 +113,10 @@ public class IO {
                 }
             });
         }
+    }
+
+    private static GoogleDriveUtil getGoogleDriveUtil(Context context) {
+        return new RealGoogleDriveUtil(context.getApplicationContext());
     }
 
     private static void startDownloadFromGoogleDrive(final GoogleDriveUtil gdu, final String fileID, final Runnable doneCallback) {
@@ -151,20 +155,20 @@ public class IO {
         }
         
         // Start the asynchronous upload of the local file to Google Drive.
-        final GoogleDriveUtil gdu = new RealGoogleDriveUtil(context.getApplicationContext());
+        final GoogleDriveUtil gdu = getGoogleDriveUtil(context);
         if (!gdu.isAuthorized()) {
             Logger.w("IO", "Google Drive isn't authorized yet for some reason, aborting upload sync");
             doneCallback.run();
             return;
         }
         
-        new RealGoogleDriveUtil(context.getApplicationContext()).uploadPassRepoFileToGoogleDrive(
+        getGoogleDriveUtil(context).uploadPassRepoFileToGoogleDrive(
                 f, new GoogleDriveResultCallback() {
             public void onSuccess() {
                 Logger.i("IO", "Successfully uploaded the local file to Google Drive.");
                 doneCallback.run();
             }
-            
+
             public void onError() {
                 Logger.w("IO", "Failed uploading the local file to Google Drive...");
                 doneCallback.run();
