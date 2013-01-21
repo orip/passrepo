@@ -22,6 +22,7 @@ import com.example.passrepo.crypto.Encryption.CipherText;
 import com.example.passrepo.crypto.PasswordHasher;
 import com.example.passrepo.crypto.PasswordHasher.ScryptParameters;
 import com.example.passrepo.dummy.DummyContent;
+import com.example.passrepo.io.GoogleDriveIO;
 import com.example.passrepo.io.IO;
 import com.example.passrepo.model.Model;
 import com.example.passrepo.util.GsonHelper;
@@ -76,7 +77,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             loadingDialog.setCancelable(false);
             loadingDialog.show();
             
-            IO.startSyncFromGoogleDriveToDisk(this, new Runnable() {
+            GoogleDriveIO.startSyncFromGoogleDriveToDisk(this, new Runnable() {
                 @Override
                 public void run() {
                     Logger.i("PasswordEntryListActivity", "Done Syncing from Drive, loading model from disk..");
@@ -136,7 +137,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
                 public void onClick(DialogInterface dialog, int which) {
                     String password = ((EditText) textEntryView.findViewById(R.id.password_entry_1)).getText().toString();
                     Model.currentModel.key = PasswordHasher.hash(password, Model.currentModel.scryptParameters);
-                    IO.saveModelAndStartSyncFromDiskToGoogleDrive(PasswordEntryListActivity.this, new Runnable() {
+                    GoogleDriveIO.saveModelAndStartSyncFromDiskToGoogleDrive(PasswordEntryListActivity.this, new Runnable() {
                         public void run() {
                             PasswordEntryListActivity.this.runOnUiThread(new Runnable() {
                                 public void run() {
