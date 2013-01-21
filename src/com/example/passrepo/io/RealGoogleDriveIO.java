@@ -4,6 +4,7 @@ import android.content.Context;
 import com.example.passrepo.Consts;
 import com.example.passrepo.drive.GoogleDriveResultCallback;
 import com.example.passrepo.drive.GoogleDriveUtil;
+import com.example.passrepo.drive.RealGoogleDriveUtil;
 import com.example.passrepo.drive.StubGoogleDriveUtil;
 import com.example.passrepo.model.Model;
 import com.example.passrepo.util.Logger;
@@ -63,7 +64,7 @@ public class RealGoogleDriveIO implements GoogleDriveIO {
     }
 
     private GoogleDriveUtil getGoogleDriveUtil() {
-        return new StubGoogleDriveUtil(context.getApplicationContext());
+        return new RealGoogleDriveUtil(context.getApplicationContext());
     }
 
     private static void startDownloadFromGoogleDrive(final GoogleDriveUtil gdu, final String fileID, final Runnable doneCallback) {
