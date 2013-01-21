@@ -106,7 +106,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
         Logger.i("TEST", "decryptedModel=%s", GsonHelper.customGson.toJson(decryptedModel));
 
         if (false) {
-            ScryptParameters scryptParameters = new ScryptParameters();
+            ScryptParameters scryptParameters = new ScryptParameters(new byte[]{});
             byte[] key = PasswordHasher.hash("foo", scryptParameters);
             CipherText encrypted = Encryption.encrypt("What's up man?".getBytes(Charsets.UTF_8), key);
             String decrypted = new String(Encryption.decrypt(encrypted, key), Charsets.UTF_8);

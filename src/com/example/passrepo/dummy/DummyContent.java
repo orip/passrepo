@@ -13,7 +13,8 @@ public class DummyContent {
     public static Model model;
 
     static {
-        ScryptParameters scryptParameters = new ScryptParameters();
+        byte salt[] = new byte[]{}; // TODO: re-generate salt on every save?
+        ScryptParameters scryptParameters = new ScryptParameters(salt);
         dummyKey = PasswordHasher.hash("foo", scryptParameters);
 
         List<PasswordEntry> passwordEntries = Lists.newArrayList(
