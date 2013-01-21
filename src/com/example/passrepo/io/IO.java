@@ -14,6 +14,7 @@ import com.example.passrepo.crypto.Encryption.CipherText;
 import com.example.passrepo.drive.GoogleDriveResultCallback;
 import com.example.passrepo.drive.GoogleDriveUtil;
 import com.example.passrepo.drive.RealGoogleDriveUtil;
+import com.example.passrepo.drive.StubGoogleDriveUtil;
 import com.example.passrepo.dummy.DummyContent;
 import com.example.passrepo.model.Model;
 import com.example.passrepo.util.GsonHelper;
@@ -116,7 +117,7 @@ public class IO {
     }
 
     private static GoogleDriveUtil getGoogleDriveUtil(Context context) {
-        return new RealGoogleDriveUtil(context.getApplicationContext());
+        return new StubGoogleDriveUtil(context.getApplicationContext());
     }
 
     private static void startDownloadFromGoogleDrive(final GoogleDriveUtil gdu, final String fileID, final Runnable doneCallback) {
