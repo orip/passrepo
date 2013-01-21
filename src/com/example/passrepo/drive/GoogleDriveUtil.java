@@ -37,8 +37,8 @@ public class GoogleDriveUtil {
 
     final private static String PASS_REPO_FILE_ID_KEY = "PassRepoFileID";
 
-    private Context context;
-    private Drive drive;
+    private final Context context;
+    private final Drive drive;
 
     public GoogleDriveUtil(Context context) {
         this.context = context;
@@ -59,22 +59,19 @@ public class GoogleDriveUtil {
 
     // Returns the saved FileID if it exists.
     public String getPassRepoFileID() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString(PASS_REPO_FILE_ID_KEY, null);
+        return getPrefs().getString(PASS_REPO_FILE_ID_KEY, null);
+    }
+
+    private SharedPreferences getPrefs() {
+        return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     private void savePassRepoFileID(String fileID) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Editor editor = prefs.edit();
-        editor.putString(PASS_REPO_FILE_ID_KEY, fileID);
-        editor.commit();
+        getPrefs().edit().putString(PASS_REPO_FILE_ID_KEY, fileID).commit();
     }
 
     private void clearPassRepoFileID() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        Editor editor = prefs.edit();
-        editor.remove(PASS_REPO_FILE_ID_KEY);
-        editor.commit();
+        getPrefs().edit().remove(PASS_REPO_FILE_ID_KEY).commit();
     }
 
     // Lists the files of the user in search of the PassRepo storage file, and saves its ID on the device.
