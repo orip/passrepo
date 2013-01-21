@@ -77,7 +77,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             loadingDialog.setCancelable(false);
             loadingDialog.show();
             
-            GoogleDriveIO.startSyncFromGoogleDriveToDisk(this, new Runnable() {
+            new GoogleDriveIO(this).startSyncFromGoogleDriveToDisk(new Runnable() {
                 @Override
                 public void run() {
                     Logger.i("PasswordEntryListActivity", "Done Syncing from Drive, loading model from disk..");
@@ -137,7 +137,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
                 public void onClick(DialogInterface dialog, int which) {
                     String password = ((EditText) textEntryView.findViewById(R.id.password_entry_1)).getText().toString();
                     Model.currentModel.key = PasswordHasher.hash(password, Model.currentModel.scryptParameters);
-                    GoogleDriveIO.saveModelAndStartSyncFromDiskToGoogleDrive(PasswordEntryListActivity.this, new Runnable() {
+                    new GoogleDriveIO(PasswordEntryListActivity.this).saveModelAndStartSyncFromDiskToGoogleDrive(new Runnable() {
                         public void run() {
                             PasswordEntryListActivity.this.runOnUiThread(new Runnable() {
                                 public void run() {

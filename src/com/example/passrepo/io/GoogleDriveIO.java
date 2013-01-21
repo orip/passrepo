@@ -17,10 +17,16 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 public class GoogleDriveIO {
-    public static void startSyncFromGoogleDriveToDisk(final Context context, final Runnable doneCallback) {
+    private final Context context;
+
+    public GoogleDriveIO(final Context context) {
+        this.context = context;
+    }
+
+    public void startSyncFromGoogleDriveToDisk(final Runnable doneCallback) {
         Logger.i("IO", "startSyncFromGoogleDriveToDisk");
 
-        final GoogleDriveUtil gdu = getGoogleDriveUtil(context);
+        final GoogleDriveUtil gdu = getGoogleDriveUtil();
         if (!gdu.isAuthorized()) {
             Logger.w("IO", "Google Drive isn't authorized yet for some reason, aborting sync");
             doneCallback.run();
@@ -55,7 +61,7 @@ public class GoogleDriveIO {
         }
     }
 
-    private static GoogleDriveUtil getGoogleDriveUtil(Context context) {
+    private GoogleDriveUtil getGoogleDriveUtil() {
         return new StubGoogleDriveUtil(context.getApplicationContext());
     }
 
@@ -76,7 +82,7 @@ public class GoogleDriveIO {
 
     }
 
-    public static void saveModelAndStartSyncFromDiskToGoogleDrive(final Context context, final Runnable doneCallback) {
+    public void saveModelAndStartSyncFromDiskToGoogleDrive(final Runnable doneCallback) {
         // Save the encrypted result to the local disk.
         File f;
         try {
@@ -95,14 +101,13 @@ public class GoogleDriveIO {
         }
 
         // Start the asynchronous upload of the local file to Google Drive.
-        final GoogleDriveUtil gdu = getGoogleDriveUtil(context);
-        if (!gdu.isAuthorized()) {
+        if (!getGoogleDriveUtil().isAuthorized()) {
             Logger.w("IO", "Google Drive isn't authorized yet for some reason, aborting upload sync");
             doneCallback.run();
             return;
         }
 
-        getGoogleDriveUtil(context).uploadPassRepoFileToGoogleDrive(
+        getGoogleDriveUtil().uploadPassRepoFileToGoogleDrive(
                 f, new GoogleDriveResultCallback() {
             public void onSuccess() {
                 Logger.i("IO", "Successfully uploaded the local file to Google Drive.");
