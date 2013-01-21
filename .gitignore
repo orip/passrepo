@@ -21,8 +21,9 @@ local.properties
 # Crash logs
 hs_err_pid*
 
-# IntelliJ IDEA
+# IntelliJ IDEA, http://devnet.jetbrains.net/docs/DOC-1186
 .idea/workspace.xml
+.idea/tasks.xml
 out
 
 # General
