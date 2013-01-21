@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.passrepo.io.GoogleDriveIO;
+import com.example.passrepo.io.RealGoogleDriveIO;
 
 public class PasswordEntryDetailEditFragment extends PasswordEntryDetailFragmentBase {
     public PasswordEntryDetailEditFragment() {
@@ -25,7 +25,7 @@ public class PasswordEntryDetailEditFragment extends PasswordEntryDetailFragment
         mItem.userName = ((EditText) getView().findViewById(R.id.userName)).getText().toString();
         mItem.password = ((EditText) getView().findViewById(R.id.password)).getText().toString();
         final Activity activity = getActivity();
-        new GoogleDriveIO(activity).saveModelAndStartSyncFromDiskToGoogleDrive(new Runnable() {
+        new RealGoogleDriveIO(activity).saveModelAndStartSyncFromDiskToGoogleDrive(new Runnable() {
             public void run() {
                 activity.runOnUiThread(new Runnable() {
                     public void run() {
