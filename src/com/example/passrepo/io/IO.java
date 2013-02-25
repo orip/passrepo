@@ -56,7 +56,7 @@ public class IO {
                 }
             });
             
-            Model.currentModel = IO.modelFromEncryptedString(fileContents, DummyContent.dummyKey);
+            Model.currentModel = IO.modelFromEncryptedString(fileContents, DummyContent.dummyKeys.encryptionKey);
             Logger.i("IO", "sucessfully loaded model from disk. Results are: " + fileContents);
             
         } catch (FileNotFoundException e) {

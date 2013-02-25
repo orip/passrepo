@@ -9,13 +9,14 @@ import com.example.passrepo.model.PasswordEntry;
 import com.google.common.collect.Lists;
 
 public class DummyContent {
-    public static byte[] dummyKey;
     public static Model model;
+
+    public static final PasswordHasher.Keys dummyKeys;
 
     static {
         byte salt[] = new byte[]{}; // TODO: re-generate salt on every save?
         ScryptParameters scryptParameters = new ScryptParameters(salt);
-        dummyKey = PasswordHasher.hash("foo", scryptParameters);
+        dummyKeys = PasswordHasher.hash("foo", scryptParameters);
 
         List<PasswordEntry> passwordEntries = Lists.newArrayList(
         new PasswordEntry("foo", "foo_user", "foo_pass"),
@@ -25,6 +26,6 @@ public class DummyContent {
         new PasswordEntry("yyy", "yyy_user", "yyy_pass"),
         new PasswordEntry("zzz", "zzz_user", "zzz_pass"));
         
-        model = new Model(dummyKey, scryptParameters, passwordEntries);
+        model = new Model(dummyKeys.encryptionKey, scryptParameters, passwordEntries);
     }
 }
