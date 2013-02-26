@@ -100,7 +100,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
         if (!TEST_ENCRYPTION)
             return;
         String encryptedString = IO.modelToEncryptedString(DummyContent.model);
-        Model decryptedModel = IO.modelFromEncryptedString(encryptedString, DummyContent.model.key);
+        Model decryptedModel = IO.modelFromEncryptedString(encryptedString, DummyContent.model.keys);
         Logger.i("TEST", "originalModel=%s", GsonHelper.customGson.toJson(DummyContent.model));
         Logger.i("TEST", "encryptedString=%s", encryptedString);
         Logger.i("TEST", "decryptedModel=%s", GsonHelper.customGson.toJson(decryptedModel));
@@ -108,10 +108,9 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
         if (false) {
             ScryptParameters scryptParameters = new ScryptParameters(new byte[]{});
             final PasswordHasher.Keys keys = PasswordHasher.hash("foo", scryptParameters);
-            byte[] encryptionKey = keys.encryptionKey;
-            CipherText encrypted = Encryption.encrypt("What's up man?".getBytes(Charsets.UTF_8), encryptionKey);
-            String decrypted = new String(Encryption.decrypt(encrypted, encryptionKey), Charsets.UTF_8);
-            Logger.i("TEST", "derivedKey=%s", Base64.encodeToString(encryptionKey, Base64.NO_WRAP));
+            CipherText encrypted = Encryption.encrypt("What's up man?".getBytes(Charsets.UTF_8), keys);
+            String decrypted = new String(Encryption.decrypt(encrypted, keys.encryptionKey), Charsets.UTF_8);
+            Logger.i("TEST", "derivedKey=%s", Base64.encodeToString(keys.encryptionKey, Base64.NO_WRAP));
             Logger.i("TEST", "encrypted=%s", Base64.encodeToString(encrypted.bytes, Base64.NO_WRAP));
             Logger.i("TEST", "decrypted=%s", decrypted);
         }
@@ -137,7 +136,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
                 public void onClick(DialogInterface dialog, int which) {
                     String password = ((EditText) textEntryView.findViewById(R.id.password_entry_1)).getText().toString();
                     final PasswordHasher.Keys keys = PasswordHasher.hash(password, Model.currentModel.scryptParameters);
-                    Model.currentModel.key = keys.encryptionKey;
+                    Model.currentModel.keys = keys;
                     new StubGoogleDriveIO(PasswordEntryListActivity.this).saveModelAndStartSyncFromDiskToGoogleDrive(new Runnable() {
                         public void run() {
                             PasswordEntryListActivity.this.runOnUiThread(new Runnable() {

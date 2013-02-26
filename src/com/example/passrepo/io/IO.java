@@ -4,6 +4,7 @@ import android.content.Context;
 import com.example.passrepo.Consts;
 import com.example.passrepo.crypto.Encryption;
 import com.example.passrepo.crypto.Encryption.CipherText;
+import com.example.passrepo.crypto.PasswordHasher;
 import com.example.passrepo.dummy.DummyContent;
 import com.example.passrepo.model.Model;
 import com.example.passrepo.util.GsonHelper;
@@ -26,23 +27,25 @@ public class IO {
         }
         
         byte[] plainText = GsonHelper.customGson.toJson(model).getBytes(Charsets.UTF_8);
-        CipherText cipherText = Encryption.encrypt(plainText, model.key);
+        CipherText cipherText = Encryption.encrypt(plainText, model.keys);
         EncryptedFile encryptedFile = new EncryptedFile(model.scryptParameters, cipherText);
         return GsonHelper.customGson.toJson(encryptedFile);
     }
 
-    public static Model modelFromEncryptedString(String encryptedString, byte[] key) {
+    public static Model modelFromEncryptedString(String encryptedString, PasswordHasher.Keys keys) {
         if (DEBUG_DO_NOT_ENCRYPT) {
             Model result = GsonHelper.customGson.fromJson(encryptedString, Model.class);
             result.populateIdsToPasswordEntriesMap();
             return result;
         }
 
+        // TODO: verify MAC
+
         EncryptedFile encryptedFile = GsonHelper.customGson.fromJson(encryptedString, EncryptedFile.class);
-        String modelJson = new String(Encryption.decrypt(encryptedFile.cipherText, key), Charsets.UTF_8);
+        String modelJson = new String(Encryption.decrypt(encryptedFile.cipherText, keys.encryptionKey), Charsets.UTF_8);
         Model result = GsonHelper.customGson.fromJson(modelJson, Model.class);
         result.populateIdsToPasswordEntriesMap();   // TODO: For some reason isn't called by the GsonHelper. Temporary workaround..
-        result.key = key;
+        result.keys = keys;
         result.scryptParameters = encryptedFile.scryptParameters;
         return result;
     }
@@ -56,7 +59,7 @@ public class IO {
                 }
             });
             
-            Model.currentModel = IO.modelFromEncryptedString(fileContents, DummyContent.dummyKeys.encryptionKey);
+            Model.currentModel = IO.modelFromEncryptedString(fileContents, DummyContent.dummyKeys);
             Logger.i("IO", "sucessfully loaded model from disk. Results are: " + fileContents);
             
         } catch (FileNotFoundException e) {

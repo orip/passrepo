@@ -26,6 +26,6 @@ public class DummyContent {
         new PasswordEntry("yyy", "yyy_user", "yyy_pass"),
         new PasswordEntry("zzz", "zzz_user", "zzz_pass"));
         
-        model = new Model(dummyKeys.encryptionKey, scryptParameters, passwordEntries);
+        model = new Model(dummyKeys, scryptParameters, passwordEntries);
     }
 }
