@@ -27,7 +27,6 @@ public class PasswordHasher {
         }
     }
 
-    // TODO: can use salt to create a different key for HMAC
     private static final int KEY_LENGTH_BYTES = 32;
 
     public static class Keys {
