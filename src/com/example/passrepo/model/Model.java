@@ -3,18 +3,19 @@ package com.example.passrepo.model;
 import java.util.List;
 import java.util.Map;
 
+import com.example.passrepo.crypto.PasswordHasher;
 import com.example.passrepo.crypto.PasswordHasher.ScryptParameters;
 import com.google.common.collect.Maps;
 
 public class Model {
     public List<PasswordEntry> passwordEntries;
-    public transient byte[] key;
+    public transient PasswordHasher.Keys keys;
     public transient ScryptParameters scryptParameters;
     
     public Map<String, PasswordEntry> idsToPasswordEntriesMap;
 
-    public Model(byte[] key, ScryptParameters scryptParameters, List<PasswordEntry> passwordEntries) {
-        this.key = key;
+    public Model(PasswordHasher.Keys keys, ScryptParameters scryptParameters, List<PasswordEntry> passwordEntries) {
+        this.keys = keys;
         this.scryptParameters = scryptParameters;
         this.passwordEntries = passwordEntries;
         this.idsToPasswordEntriesMap = Maps.newHashMap();
