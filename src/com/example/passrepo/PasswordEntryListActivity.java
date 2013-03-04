@@ -36,8 +36,8 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         testDriveEncryption();
+        initActivity();
     }
 
     @Override
@@ -60,7 +60,9 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     protected void onResume() {
         super.onResume();
         testDriveEncryption();
+    }
 
+    private void initActivity() {
         // Once we have an updated model, set the passwords list content view. Avoid it if the list is already set.
         if (Model.currentModel != null && findViewById(android.R.id.content) != null) {
             setContentView(R.layout.activity_passwordentry_list);
