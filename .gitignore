@@ -14,6 +14,8 @@ libs/armeabi/
 libs/armeabi-v7a/
 obj/
 gen/
+libs/
+.gradle
 
 # Local configuration files (sdk path, etc)
 local.properties

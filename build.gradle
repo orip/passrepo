@@ -1,0 +1,56 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+    maven {
+      url "http://google-api-client-libraries.appspot.com/mavenrepo"
+    }
+    flatDir {
+      dirs 'static_jars'
+    }
+}
+
+dependencies {
+    compile 'com.google.code.gson:gson:2.2.2'
+    compile 'com.google.guava:guava:14.0'
+    compile 'com.google.code.findbugs:jsr305:2.0.1'
+
+    // from the source checkout
+    compile 'com.google.android:android-support-v4:r12'
+
+    // old-style GDrive integration, required for compilation (we don't use it atm)
+    compile 'com.google.api-client:google-api-client:1.11.0-beta'
+    compile 'com.google.http-client:google-http-client-jackson:1.11.0-beta'
+    compile 'com.google.apis:google-api-services-drive:v2-rev9-1.8.0-beta'
+
+    // these are probably runtime requirements for the old-style GDrive integration
+    // compile 'com.fasterxml.jackson.core:jackson-core:2.0.5'
+    // compile 'org.codehaus.jackson:jackson-core-asl:1.9.9'
+    // compile 'com.google.protobuf:protobuf-java:2.4.1'
+    // compile 'com.google.http-client:google-http-client:1.11.0-beta'
+    // compile 'com.google.oauth-client:google-oauth-client:1.11.0-beta'
+    // compile 'com.google.http-client:google-http-client-jackson2:1.11.0-beta'
+
+    // these don't resolve (extra android dependency)
+    // compile 'com.google.api-client:google-api-client-android:1.11.0-beta'
+    // compile 'com.google.api-client:google-api-client-android2:1.11.0-beta'
+    // compile 'com.google.http-client:google-http-client-android2:1.11.0-beta'
+    // compile 'com.google.http-client:google-http-client-android3:1.11.0-beta'
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = "1.4"
+}
+
+// Inspiration:
+// http://docs.codehaus.org/display/GRADLE/Cookbook#Cookbook-GatheringalldependencieslibrariesJARsinonefolder
+//
+// Removing the directory first, otherwise old JARs stay there and confuse IntelliJ.
+def jarPath = "libs"
+task deleteCurrentLibs(type: Delete) {
+    delete jarPath
+}
+task copyLibs(type: Copy, dependsOn: deleteCurrentLibs) {
+    into jarPath
+    from configurations.runtime
+}
