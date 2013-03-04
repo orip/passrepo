@@ -100,7 +100,12 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
         if (!TEST_ENCRYPTION)
             return;
         String encryptedString = IO.modelToEncryptedString(DummyContent.model);
-        Model decryptedModel = IO.modelFromEncryptedString(encryptedString, DummyContent.model.keys);
+        Model decryptedModel = null;
+        try {
+            decryptedModel = IO.modelFromEncryptedString(encryptedString, DummyContent.model.keys);
+        } catch (PassRepoBaseSecurityException e) {
+            throw new RuntimeException(e);
+        }
         Logger.i("TEST", "originalModel=%s", GsonHelper.customGson.toJson(DummyContent.model));
         Logger.i("TEST", "encryptedString=%s", encryptedString);
         Logger.i("TEST", "decryptedModel=%s", GsonHelper.customGson.toJson(decryptedModel));
