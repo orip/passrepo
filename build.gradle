@@ -19,9 +19,9 @@ dependencies {
     compile 'com.google.android:android-support-v4:r12'
 
     // old-style GDrive integration, required for compilation (we don't use it atm)
-    compile 'com.google.api-client:google-api-client:1.11.0-beta'
-    compile 'com.google.http-client:google-http-client-jackson:1.11.0-beta'
-    compile 'com.google.apis:google-api-services-drive:v2-rev9-1.8.0-beta'
+    // compile 'com.google.api-client:google-api-client:1.11.0-beta'
+    // compile 'com.google.http-client:google-http-client-jackson:1.11.0-beta'
+    // compile 'com.google.apis:google-api-services-drive:v2-rev9-1.8.0-beta'
 
     // these are probably runtime requirements for the old-style GDrive integration
     // compile 'com.fasterxml.jackson.core:jackson-core:2.0.5'
