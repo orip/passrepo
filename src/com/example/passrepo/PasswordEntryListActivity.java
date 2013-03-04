@@ -69,13 +69,13 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
                 ((PasswordEntryListFragment) getSupportFragmentManager().findFragmentById(R.id.passwordentry_list))
                         .setActivateOnItemClick(true);
             }
-            
+
         } else {
             final ProgressDialog loadingDialog = new ProgressDialog(this);
             loadingDialog.setMessage("Loading Passwords..");
             loadingDialog.setCancelable(false);
             loadingDialog.show();
-            
+
             new StubGoogleDriveIO(this).startSyncFromGoogleDriveToDisk(new Runnable() {
                 @Override
                 public void run() {
@@ -133,29 +133,29 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case MENU_CHANGE_PASSWORD:
-            LayoutInflater factory = LayoutInflater.from(this);
-            final View textEntryView = factory.inflate(R.layout.change_password_alert_dialog, null);
+            case MENU_CHANGE_PASSWORD:
+                LayoutInflater factory = LayoutInflater.from(this);
+                final View textEntryView = factory.inflate(R.layout.change_password_alert_dialog, null);
 
-            new AlertDialog.Builder(this).setView(textEntryView).setPositiveButton("Update", new OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    String password = ((EditText) textEntryView.findViewById(R.id.password_entry_1)).getText().toString();
-                    final PasswordHasher.Keys keys = PasswordHasher.hash(password, Model.currentModel.scryptParameters);
-                    Model.currentModel.keys = keys;
-                    new StubGoogleDriveIO(PasswordEntryListActivity.this).saveModelAndStartSyncFromDiskToGoogleDrive(new Runnable() {
-                        public void run() {
-                            PasswordEntryListActivity.this.runOnUiThread(new Runnable() {
-                                public void run() {
-                                    Toast.makeText(PasswordEntryListActivity.this, "Password updated", Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        }
-                    });
-                }
-            }).setNegativeButton("Not now", null).setCancelable(true).setOnCancelListener(null).show();
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
+                new AlertDialog.Builder(this).setView(textEntryView).setPositiveButton("Update", new OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        String password = ((EditText) textEntryView.findViewById(R.id.password_entry_1)).getText().toString();
+                        final PasswordHasher.Keys keys = PasswordHasher.hash(password, Model.currentModel.scryptParameters);
+                        Model.currentModel.keys = keys;
+                        new StubGoogleDriveIO(PasswordEntryListActivity.this).saveModelAndStartSyncFromDiskToGoogleDrive(new Runnable() {
+                            public void run() {
+                                PasswordEntryListActivity.this.runOnUiThread(new Runnable() {
+                                    public void run() {
+                                        Toast.makeText(PasswordEntryListActivity.this, "Password updated", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }).setNegativeButton("Not now", null).setCancelable(true).setOnCancelListener(null).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }
