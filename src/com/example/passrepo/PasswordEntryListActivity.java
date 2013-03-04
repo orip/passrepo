@@ -1,6 +1,8 @@
 package com.example.passrepo;
 
-import android.app.*;
+import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -23,8 +25,6 @@ import com.example.passrepo.model.Model;
 import com.example.passrepo.util.GsonHelper;
 import com.example.passrepo.util.Logger;
 import com.google.common.base.Charsets;
-
-import java.util.List;
 
 public class PasswordEntryListActivity extends FragmentActivity implements PasswordEntryListFragment.Callbacks, SearchView.OnQueryTextListener {
     private boolean mTwoPane;
