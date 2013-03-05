@@ -2,6 +2,7 @@ package com.example.passrepo.io;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.widget.Toast;
 import com.example.passrepo.Consts;
 import com.example.passrepo.DecryptionFailedException;
 import com.example.passrepo.PassRepoBaseSecurityException;
@@ -13,6 +14,7 @@ import com.example.passrepo.model.Model;
 import com.example.passrepo.util.GsonHelper;
 import com.example.passrepo.util.Logger;
 import com.google.common.base.Charsets;
+import com.google.common.base.Stopwatch;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
@@ -22,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.concurrent.TimeUnit;
 
 public class IO {
 
@@ -81,16 +84,23 @@ public class IO {
     }
 
     public static void saveModelToDisk(final Context context) {
-        try {
-            String fileContents = modelToEncryptedString(Model.currentModel);
-            CharStreams.write(fileContents, new OutputSupplier<OutputStream>() {
-                @Override
-                public OutputStream getOutput() throws IOException {
-                    return context.openFileOutput(Consts.PASS_REPO_LOCAL_DATABASE_FILENAME, Context.MODE_PRIVATE);
+        GlobalExecutors.CACHED_EXECUTOR.execute(new Runnable() {
+            public void run() {
+                try {
+                    final Stopwatch stopwatch = new Stopwatch().start();
+                    String fileContents = modelToEncryptedString(Model.currentModel);
+                    final long elapsedMs = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+                    CharStreams.write(fileContents, new OutputSupplier<OutputStream>() {
+                        @Override
+                        public OutputStream getOutput() throws IOException {
+                            return context.openFileOutput(Consts.PASS_REPO_LOCAL_DATABASE_FILENAME, Context.MODE_PRIVATE);
+                        }
+                    });
+                    Toast.makeText(context, "Saved, encryption time=" + elapsedMs + "ms", Toast.LENGTH_LONG).show();
+                } catch (IOException e) {
+                    new AlertDialog.Builder(context).setTitle("Error writing file").setMessage(e.getMessage()).setCancelable(true).show();
                 }
-            });
-        } catch (IOException e) {
-            new AlertDialog.Builder(context).setTitle("Error writing file").setMessage(e.getMessage()).setCancelable(true).show();
-        }
+            }
+        });
     }
 }

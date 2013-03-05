@@ -59,6 +59,12 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        IO.saveModelToDisk(this);
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancel(Consts.COPY_PASSWORD_NOTIFICATION_ID);
