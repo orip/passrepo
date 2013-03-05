@@ -20,10 +20,7 @@ import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 import com.google.common.io.OutputSupplier;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.concurrent.TimeUnit;
 
 public class IO {
@@ -90,10 +87,10 @@ public class IO {
                     final Stopwatch stopwatch = new Stopwatch().start();
                     String fileContents = modelToEncryptedString(Model.currentModel);
                     final long elapsedMs = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-                    CharStreams.write(fileContents, new OutputSupplier<OutputStream>() {
-                        @Override
-                        public OutputStream getOutput() throws IOException {
-                            return context.openFileOutput(Consts.PASS_REPO_LOCAL_DATABASE_FILENAME, Context.MODE_PRIVATE);
+                    // Using OutputSupplier<OutputStream> fails to compile for some reason, using OutputStreamWriter instead
+                    CharStreams.write(fileContents, new OutputSupplier<OutputStreamWriter>() {
+                        public OutputStreamWriter getOutput() throws IOException {
+                            return new OutputStreamWriter(context.openFileOutput(Consts.PASS_REPO_LOCAL_DATABASE_FILENAME, Context.MODE_PRIVATE));
                         }
                     });
                     Toast.makeText(context, "Saved, encryption time=" + elapsedMs + "ms", Toast.LENGTH_LONG).show();
