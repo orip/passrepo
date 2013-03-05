@@ -7,8 +7,12 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import android.widget.Toast;
+import com.example.passrepo.events.SearchQueryUpdatedEvent;
 import com.example.passrepo.model.Model;
 import com.example.passrepo.model.PasswordEntry;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 public class PasswordEntryListFragment extends ListFragment {
 
@@ -16,6 +20,9 @@ public class PasswordEntryListFragment extends ListFragment {
 
     private Callbacks mCallbacks = sDummyCallbacks;
     private int mActivatedPosition = ListView.INVALID_POSITION;
+
+    private final Bus bus;
+    private ArrayAdapter<PasswordEntry> listAdapter;
 
     public interface Callbacks {
         public void onItemSelected(String id);
@@ -28,15 +35,17 @@ public class PasswordEntryListFragment extends ListFragment {
     };
 
     public PasswordEntryListFragment() {
+        bus = BusWrapper.globalBus;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setListAdapter(new ArrayAdapter<PasswordEntry>(getActivity(),
+        listAdapter = new ArrayAdapter<PasswordEntry>(getActivity(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
-                Model.currentModel.passwordEntries));
+                Model.currentModel.passwordEntries);
+        setListAdapter(listAdapter);
     }
 
     @Override
@@ -56,12 +65,15 @@ public class PasswordEntryListFragment extends ListFragment {
         }
 
         mCallbacks = (Callbacks) activity;
+
+        bus.register(this);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mCallbacks = sDummyCallbacks;
+        bus.unregister(this);
     }
 
     @Override
@@ -92,5 +104,11 @@ public class PasswordEntryListFragment extends ListFragment {
         }
 
         mActivatedPosition = position;
+    }
+
+    @Subscribe
+    public void filterVisibleItems(SearchQueryUpdatedEvent event) {
+        Toast.makeText(getActivity(), "Got '" + event.currentQuery + "' through bus", Toast.LENGTH_SHORT).show();
+        listAdapter.getFilter().filter(event.currentQuery);
     }
 }

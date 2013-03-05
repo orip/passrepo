@@ -10,28 +10,35 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Base64;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.Toast;
 import com.example.passrepo.crypto.Encryption;
 import com.example.passrepo.crypto.Encryption.CipherText;
 import com.example.passrepo.crypto.PasswordHasher;
 import com.example.passrepo.crypto.PasswordHasher.ScryptParameters;
 import com.example.passrepo.dummy.DummyContent;
+import com.example.passrepo.events.SearchQueryUpdatedEvent;
 import com.example.passrepo.io.IO;
 import com.example.passrepo.io.StubGoogleDriveIO;
 import com.example.passrepo.model.Model;
 import com.example.passrepo.util.GsonHelper;
 import com.example.passrepo.util.Logger;
 import com.google.common.base.Charsets;
+import com.squareup.otto.Bus;
 
-public class PasswordEntryListActivity extends FragmentActivity implements PasswordEntryListFragment.Callbacks {
+public class PasswordEntryListActivity extends FragmentActivity implements PasswordEntryListFragment.Callbacks, SearchView.OnQueryTextListener {
     private boolean mTwoPane;
+    private SearchView mSearchView;
 
     private static final boolean TEST_ENCRYPTION = false;
+
+    private final Bus bus;
+
+    public PasswordEntryListActivity() {
+        this.bus = BusWrapper.globalBus;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,6 +80,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             }
 
         } else {
+            // TODO: probably belongs to onResume
             final ProgressDialog loadingDialog = new ProgressDialog(this);
             loadingDialog.setMessage("Loading Passwords..");
             loadingDialog.setCancelable(false);
@@ -129,7 +137,56 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(Menu.NONE, MENU_CHANGE_PASSWORD, Menu.NONE, R.string.change_password_menu_label).setIcon(
                 android.R.drawable.ic_menu_agenda);
-        return super.onCreateOptionsMenu(menu);
+        super.onCreateOptionsMenu(menu);
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.searchview_in_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        mSearchView = (SearchView) searchItem.getActionView();
+        setupSearchView(searchItem);
+
+        return true;
+    }
+
+    private void setupSearchView(MenuItem searchItem) {
+
+        if (isAlwaysExpanded()) {
+            mSearchView.setIconifiedByDefault(false);
+        } else {
+            searchItem.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM
+                    | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+        }
+
+//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+//        if (searchManager != null) {
+//            List<SearchableInfo> searchables = searchManager.getSearchablesInGlobalSearch();
+//
+//            // Try to use the "applications" global search provider
+//            SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
+//            for (SearchableInfo inf : searchables) {
+//                if (inf.getSuggestAuthority() != null
+//                        && inf.getSuggestAuthority().startsWith("applications")) {
+//                    info = inf;
+//                }
+//            }
+//            mSearchView.setSearchableInfo(info);
+//        }
+
+        mSearchView.setOnQueryTextListener(this);
+    }
+
+    public boolean onQueryTextChange(String newText) {
+        bus.post(new SearchQueryUpdatedEvent(newText));
+        return false;
+    }
+
+    public boolean onQueryTextSubmit(String query) {
+        // do nothing, the correct results should be available from the realtime text updates
+        return false;
+    }
+
+    protected boolean isAlwaysExpanded() {
+        return false;
     }
 
     @Override
