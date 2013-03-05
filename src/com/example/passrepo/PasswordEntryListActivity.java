@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Base64;
 import android.view.*;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -52,6 +53,11 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
         if (mTwoPane) {
             findViewById(R.id.passwordentry_detail_container).setVisibility(View.VISIBLE);
             PasswordEntryDetailFragmentBase.switchDetailFragment(this, id, new PasswordEntryDetailFragment());
+
+            InputMethodManager imm = (InputMethodManager)getSystemService(
+                    Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(findViewById(R.id.searchView).getWindowToken(), 0);
+
         } else {
             Intent detailIntent = new Intent(this, PasswordEntryDetailActivity.class);
             detailIntent.putExtra(Consts.ARG_ITEM_ID, id);
