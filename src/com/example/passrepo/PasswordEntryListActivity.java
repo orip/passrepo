@@ -235,7 +235,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
         LayoutInflater factory = LayoutInflater.from(this);
         final View addEntryView = factory.inflate(R.layout.add_entry_dialog, null);
 
-        new AlertDialog.Builder(this).setView(addEntryView).setPositiveButton("Update", new OnClickListener() {
+        new AlertDialog.Builder(this).setView(addEntryView).setPositiveButton("Add", new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 String title = ((EditText)addEntryView.findViewById(R.id.title)).getText().toString();
                 String userName = ((EditText)addEntryView.findViewById(R.id.username)).getText().toString();
@@ -243,6 +243,6 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
                 Model.currentModel.addPasswordEntry(new PasswordEntry(title, userName, password));
                 bus.post(new PasswordListUpdatedEvent());
             }
-        }).setNegativeButton("Not now", null).setCancelable(true).setOnCancelListener(null).show();
+        }).setNegativeButton("Cancel", null).setCancelable(true).setOnCancelListener(null).show();
     }
 }
