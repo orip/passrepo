@@ -16,7 +16,6 @@ import com.example.passrepo.util.Logger;
 import com.google.common.base.Charsets;
 import com.google.common.base.Stopwatch;
 import com.google.common.io.CharStreams;
-import com.google.common.io.Files;
 import com.google.common.io.InputSupplier;
 import com.google.common.io.OutputSupplier;
 
@@ -81,7 +80,7 @@ public class IO {
     }
 
     public static void saveModelToDisk(final Context context) {
-        GlobalExecutors.CACHED_EXECUTOR.execute(new Runnable() {
+        GlobalExecutors.BACKGROUND_PARALLEL_EXECUTOR.execute(new Runnable() {
             public void run() {
                 try {
                     final Stopwatch stopwatch = new Stopwatch().start();
@@ -93,7 +92,11 @@ public class IO {
                             return new OutputStreamWriter(context.openFileOutput(Consts.PASS_REPO_LOCAL_DATABASE_FILENAME, Context.MODE_PRIVATE));
                         }
                     });
-                    Toast.makeText(context, "Saved, encryption time=" + elapsedMs + "ms", Toast.LENGTH_LONG).show();
+                    GlobalExecutors.MAIN_THREAD_EXECUTOR.execute(new Runnable() {
+                        public void run() {
+                            Toast.makeText(context, "Saved, encryption time=" + elapsedMs + "ms", Toast.LENGTH_LONG).show();
+                        }
+                    });
                 } catch (IOException e) {
                     new AlertDialog.Builder(context).setTitle("Error writing file").setMessage(e.getMessage()).setCancelable(true).show();
                 }
