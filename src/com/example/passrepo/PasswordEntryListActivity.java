@@ -240,7 +240,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
                 String title = ((EditText)addEntryView.findViewById(R.id.title)).getText().toString();
                 String userName = ((EditText)addEntryView.findViewById(R.id.username)).getText().toString();
                 String password = ((EditText)addEntryView.findViewById(R.id.password)).getText().toString();
-                Model.currentModel.getPasswordEntries().add(new PasswordEntry(title, userName, password));
+                Model.currentModel.addPasswordEntry(new PasswordEntry(title, userName, password));
                 bus.post(new PasswordListUpdatedEvent());
             }
         }).setNegativeButton("Not now", null).setCancelable(true).setOnCancelListener(null).show();
