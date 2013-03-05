@@ -1,0 +1,3 @@
+<resources>
+    <item type="layout" name="activity_passwordentry_list">@layout/activity_passwordentry_twopane_vertical</item>
+</resources>
