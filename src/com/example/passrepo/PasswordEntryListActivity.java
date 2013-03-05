@@ -50,6 +50,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     @Override
     public void onItemSelected(String id) {
         if (mTwoPane) {
+            findViewById(R.id.passwordentry_detail_container).setVisibility(View.VISIBLE);
             PasswordEntryDetailFragmentBase.switchDetailFragment(this, id, new PasswordEntryDetailFragment());
         } else {
             Intent detailIntent = new Intent(this, PasswordEntryDetailActivity.class);
