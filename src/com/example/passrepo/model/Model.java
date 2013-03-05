@@ -1,14 +1,15 @@
 package com.example.passrepo.model;
 
-import java.util.List;
-import java.util.Map;
-
 import com.example.passrepo.crypto.PasswordHasher;
 import com.example.passrepo.crypto.PasswordHasher.ScryptParameters;
 import com.google.common.collect.Maps;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 public class Model {
-    public List<PasswordEntry> passwordEntries;
+    private List<PasswordEntry> passwordEntries;
     public transient PasswordHasher.Keys keys;
     public transient ScryptParameters scryptParameters;
     
@@ -25,7 +26,7 @@ public class Model {
     // TODO: Change to private.
     public void populateIdsToPasswordEntriesMap() {
         long index = 0;
-        for (PasswordEntry passwordEntry : passwordEntries) {
+        for (PasswordEntry passwordEntry : getPasswordEntries()) {
             passwordEntry.id = Long.toString(index++);
             idsToPasswordEntriesMap.put(passwordEntry.id, passwordEntry);
         }
@@ -36,4 +37,8 @@ public class Model {
     }
     
     public static Model currentModel = null;
+
+    public List<PasswordEntry> getPasswordEntries() {
+        return Collections.unmodifiableList(passwordEntries);
+    }
 }
