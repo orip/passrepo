@@ -108,7 +108,6 @@ public class PasswordEntryListFragment extends ListFragment {
 
     @Subscribe
     public void filterVisibleItems(SearchQueryUpdatedEvent event) {
-        Toast.makeText(getActivity(), "Got '" + event.currentQuery + "' through bus", Toast.LENGTH_SHORT).show();
         listAdapter.getFilter().filter(event.currentQuery);
     }
 }

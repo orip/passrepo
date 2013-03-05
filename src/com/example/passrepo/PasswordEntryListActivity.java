@@ -59,6 +59,12 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        IO.saveModelToDisk(this);
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancel(Consts.COPY_PASSWORD_NOTIFICATION_ID);
@@ -92,7 +98,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
                     Logger.i("PasswordEntryListActivity", "Done Syncing from Drive, loading model from disk..");
                     IO.loadModelFromDisk(PasswordEntryListActivity.this);
 
-                    Logger.i("PasswordEntryListActivity", "Upadting UI..");
+                    Logger.i("PasswordEntryListActivity", "Updating UI..");
                     runOnUiThread(new Runnable() {
                         public void run() {
                             loadingDialog.dismiss();
