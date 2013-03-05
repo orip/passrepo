@@ -7,8 +7,12 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import android.widget.Toast;
+import com.example.passrepo.events.SearchQueryUpdatedEvent;
 import com.example.passrepo.model.Model;
 import com.example.passrepo.model.PasswordEntry;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 public class PasswordEntryListFragment extends ListFragment {
 
@@ -16,6 +20,8 @@ public class PasswordEntryListFragment extends ListFragment {
 
     private Callbacks mCallbacks = sDummyCallbacks;
     private int mActivatedPosition = ListView.INVALID_POSITION;
+
+    private final Bus bus;
 
     public interface Callbacks {
         public void onItemSelected(String id);
@@ -28,6 +34,7 @@ public class PasswordEntryListFragment extends ListFragment {
     };
 
     public PasswordEntryListFragment() {
+        bus = BusWrapper.globalBus;
     }
 
     @Override
@@ -56,12 +63,15 @@ public class PasswordEntryListFragment extends ListFragment {
         }
 
         mCallbacks = (Callbacks) activity;
+
+        bus.register(this);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mCallbacks = sDummyCallbacks;
+        bus.unregister(this);
     }
 
     @Override
@@ -92,5 +102,10 @@ public class PasswordEntryListFragment extends ListFragment {
         }
 
         mActivatedPosition = position;
+    }
+
+    @Subscribe
+    public void filterVisibleItems(SearchQueryUpdatedEvent event) {
+        Toast.makeText(getActivity(), "Got '" + event.currentQuery + "' through bus", Toast.LENGTH_SHORT).show();
     }
 }

@@ -19,18 +19,26 @@ import com.example.passrepo.crypto.Encryption.CipherText;
 import com.example.passrepo.crypto.PasswordHasher;
 import com.example.passrepo.crypto.PasswordHasher.ScryptParameters;
 import com.example.passrepo.dummy.DummyContent;
+import com.example.passrepo.events.SearchQueryUpdatedEvent;
 import com.example.passrepo.io.IO;
 import com.example.passrepo.io.StubGoogleDriveIO;
 import com.example.passrepo.model.Model;
 import com.example.passrepo.util.GsonHelper;
 import com.example.passrepo.util.Logger;
 import com.google.common.base.Charsets;
+import com.squareup.otto.Bus;
 
 public class PasswordEntryListActivity extends FragmentActivity implements PasswordEntryListFragment.Callbacks, SearchView.OnQueryTextListener {
     private boolean mTwoPane;
     private SearchView mSearchView;
 
     private static final boolean TEST_ENCRYPTION = false;
+
+    private final Bus bus;
+
+    public PasswordEntryListActivity() {
+        this.bus = BusWrapper.globalBus;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -168,17 +176,12 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     }
 
     public boolean onQueryTextChange(String newText) {
-        Toast.makeText(this, "Query = " + newText, Toast.LENGTH_SHORT).show();
+        bus.post(new SearchQueryUpdatedEvent(newText));
         return false;
     }
 
     public boolean onQueryTextSubmit(String query) {
-        Toast.makeText(this, "Query = " + query + " : submitted", Toast.LENGTH_SHORT).show();
-        return false;
-    }
-
-    public boolean onClose() {
-        Toast.makeText(this, "Closed!", Toast.LENGTH_SHORT).show();
+        // do nothing, the correct results should be available from the realtime text updates
         return false;
     }
 
