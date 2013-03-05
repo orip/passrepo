@@ -152,11 +152,13 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
                 android.R.drawable.ic_menu_agenda);
         super.onCreateOptionsMenu(menu);
 
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.searchview_in_menu, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        mSearchView = (SearchView) searchItem.getActionView();
-        setupSearchView(searchItem);
+        if (!mTwoPane) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.searchview_in_menu, menu);
+            MenuItem searchItem = menu.findItem(R.id.action_search);
+            mSearchView = (SearchView) searchItem.getActionView();
+            setupSearchView(searchItem);
+        }
 
         return true;
     }
