@@ -19,7 +19,13 @@ public class DummyContent {
         dummyKeys = PasswordHasher.hash("foo", scryptParameters);
 
         List<PasswordEntry> passwordEntries = Lists.newArrayList(
-        new PasswordEntry("foo", "foo_user", "foo_pass"),
+                new PasswordEntry("foo", "foo_user", "foo_pass"),
+                new PasswordEntry("foo", "foo_user", "foo_pass"),
+                new PasswordEntry("foo", "foo_user", "foo_pass"),
+                new PasswordEntry("foo", "foo_user", "foo_pass"),
+                new PasswordEntry("foo", "foo_user", "foo_pass"),
+                new PasswordEntry("foo", "foo_user", "foo_pass"),
+                new PasswordEntry("foo", "foo_user", "foo_pass"),
         new PasswordEntry("bar", "bar_user", "bar_pass"),
         new PasswordEntry("baz", "baz_user", "baz_pass"),
         new PasswordEntry("xxx", "xxx_user", "xxx_pass"),
