@@ -79,7 +79,8 @@ public class PasswordEntryListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
-        mCallbacks.onItemSelected(Model.currentModel.passwordEntries.get(position).id);
+
+        mCallbacks.onItemSelected(listAdapter.getItem(position).id);
     }
 
     @Override
