@@ -72,6 +72,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             }
 
         } else {
+            // TODO: probably belongs to onResume
             final ProgressDialog loadingDialog = new ProgressDialog(this);
             loadingDialog.setMessage("Loading Passwords..");
             loadingDialog.setCancelable(false);
