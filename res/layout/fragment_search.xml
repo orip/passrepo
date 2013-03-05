@@ -6,9 +6,10 @@
               android:layout_height="match_parent" android:layout_gravity="right|top" android:gravity="right">
 
     <SearchView
-            android:layout_width="550dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/searchView" android:layout_gravity="right|top" android:background="@android:color/background_dark"
             android:iconifiedByDefault="false" android:queryHint="Click here to seach..."
-            android:imeOptions="flagNoFullscreen|flagNoExtractUi"/>
+            android:imeOptions="flagNoFullscreen|flagNoExtractUi" android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"/>
 </LinearLayout>
