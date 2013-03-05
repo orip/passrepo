@@ -147,7 +147,6 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     }
 
     private static final int MENU_CHANGE_PASSWORD = 1;
-    private static final int MENU_ADD_ENTRY = 2;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -202,7 +201,7 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             case MENU_CHANGE_PASSWORD:
                 showChangePasswordDialog();
                 return true;
-            case MENU_ADD_ENTRY:
+            case R.id.action_bar_add:
                 showAddEntryDialog();
                 return true;
             default:
