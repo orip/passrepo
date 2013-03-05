@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import android.widget.Toast;
+import com.example.passrepo.events.PasswordListUpdatedEvent;
 import com.example.passrepo.events.SearchQueryUpdatedEvent;
 import com.example.passrepo.model.Model;
 import com.example.passrepo.model.PasswordEntry;
@@ -110,5 +111,10 @@ public class PasswordEntryListFragment extends ListFragment {
     @Subscribe
     public void filterVisibleItems(SearchQueryUpdatedEvent event) {
         listAdapter.getFilter().filter(event.currentQuery);
+    }
+
+    @Subscribe
+    public void refreshListData(PasswordListUpdatedEvent event) {
+        listAdapter.notifyDataSetChanged();
     }
 }
