@@ -145,20 +145,25 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     }
 
     private static final int MENU_CHANGE_PASSWORD = 1;
+    private static final int MENU_ADD_ENTRY = 2;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.NONE, MENU_CHANGE_PASSWORD, Menu.NONE, R.string.change_password_menu_label).setIcon(
-                android.R.drawable.ic_menu_agenda);
         super.onCreateOptionsMenu(menu);
 
+        menu.add(Menu.NONE, MENU_CHANGE_PASSWORD, Menu.NONE, R.string.change_password_menu_label).setIcon(
+                android.R.drawable.ic_menu_agenda);
+
+        MenuInflater inflater = getMenuInflater();
+
         if (!mTwoPane) {
-            MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.searchview_in_menu, menu);
             MenuItem searchItem = menu.findItem(R.id.action_search);
             mSearchView = (SearchView) searchItem.getActionView();
             setupSearchView(searchItem);
         }
+
+        inflater.inflate(R.menu.main_actions, menu);
 
         return true;
     }
