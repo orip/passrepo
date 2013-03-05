@@ -22,6 +22,7 @@ public class PasswordEntryListFragment extends ListFragment {
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
     private final Bus bus;
+    private ArrayAdapter<PasswordEntry> listAdapter;
 
     public interface Callbacks {
         public void onItemSelected(String id);
@@ -40,10 +41,11 @@ public class PasswordEntryListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setListAdapter(new ArrayAdapter<PasswordEntry>(getActivity(),
+        listAdapter = new ArrayAdapter<PasswordEntry>(getActivity(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
-                Model.currentModel.passwordEntries));
+                Model.currentModel.passwordEntries);
+        setListAdapter(listAdapter);
     }
 
     @Override
@@ -107,5 +109,6 @@ public class PasswordEntryListFragment extends ListFragment {
     @Subscribe
     public void filterVisibleItems(SearchQueryUpdatedEvent event) {
         Toast.makeText(getActivity(), "Got '" + event.currentQuery + "' through bus", Toast.LENGTH_SHORT).show();
+        listAdapter.getFilter().filter(event.currentQuery);
     }
 }
