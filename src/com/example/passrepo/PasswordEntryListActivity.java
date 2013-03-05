@@ -179,21 +179,6 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
                     | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         }
 
-//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-//        if (searchManager != null) {
-//            List<SearchableInfo> searchables = searchManager.getSearchablesInGlobalSearch();
-//
-//            // Try to use the "applications" global search provider
-//            SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
-//            for (SearchableInfo inf : searchables) {
-//                if (inf.getSuggestAuthority() != null
-//                        && inf.getSuggestAuthority().startsWith("applications")) {
-//                    info = inf;
-//                }
-//            }
-//            mSearchView.setSearchableInfo(info);
-//        }
-
         mSearchView.setOnQueryTextListener(this);
     }
 
