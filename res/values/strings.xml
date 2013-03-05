@@ -20,4 +20,5 @@
     <string name="search_label">Search</string>
     <string name="search_hint">Search Hint</string>
     <string name="search_invoke">App/Search/Invoke Search</string>
+    <string name="action_add_title">Add</string>
 </resources>

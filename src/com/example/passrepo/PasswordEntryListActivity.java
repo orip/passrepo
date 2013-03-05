@@ -20,10 +20,12 @@ import com.example.passrepo.crypto.Encryption.CipherText;
 import com.example.passrepo.crypto.PasswordHasher;
 import com.example.passrepo.crypto.PasswordHasher.ScryptParameters;
 import com.example.passrepo.dummy.DummyContent;
+import com.example.passrepo.events.PasswordListUpdatedEvent;
 import com.example.passrepo.events.SearchQueryUpdatedEvent;
 import com.example.passrepo.io.IO;
 import com.example.passrepo.io.StubGoogleDriveIO;
 import com.example.passrepo.model.Model;
+import com.example.passrepo.model.PasswordEntry;
 import com.example.passrepo.util.GsonHelper;
 import com.example.passrepo.util.Logger;
 import com.google.common.base.Charsets;
@@ -148,17 +150,21 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.NONE, MENU_CHANGE_PASSWORD, Menu.NONE, R.string.change_password_menu_label).setIcon(
-                android.R.drawable.ic_menu_agenda);
         super.onCreateOptionsMenu(menu);
 
+        menu.add(Menu.NONE, MENU_CHANGE_PASSWORD, Menu.NONE, R.string.change_password_menu_label).setIcon(
+                android.R.drawable.ic_menu_agenda);
+
+        MenuInflater inflater = getMenuInflater();
+
         if (!mTwoPane) {
-            MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.searchview_in_menu, menu);
             MenuItem searchItem = menu.findItem(R.id.action_search);
             mSearchView = (SearchView) searchItem.getActionView();
             setupSearchView(searchItem);
         }
+
+        inflater.inflate(R.menu.main_actions, menu);
 
         return true;
     }
@@ -171,21 +177,6 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
             searchItem.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM
                     | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         }
-
-//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-//        if (searchManager != null) {
-//            List<SearchableInfo> searchables = searchManager.getSearchablesInGlobalSearch();
-//
-//            // Try to use the "applications" global search provider
-//            SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
-//            for (SearchableInfo inf : searchables) {
-//                if (inf.getSuggestAuthority() != null
-//                        && inf.getSuggestAuthority().startsWith("applications")) {
-//                    info = inf;
-//                }
-//            }
-//            mSearchView.setSearchableInfo(info);
-//        }
 
         mSearchView.setOnQueryTextListener(this);
     }
@@ -208,28 +199,50 @@ public class PasswordEntryListActivity extends FragmentActivity implements Passw
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case MENU_CHANGE_PASSWORD:
-                LayoutInflater factory = LayoutInflater.from(this);
-                final View textEntryView = factory.inflate(R.layout.change_password_alert_dialog, null);
-
-                new AlertDialog.Builder(this).setView(textEntryView).setPositiveButton("Update", new OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        String password = ((EditText) textEntryView.findViewById(R.id.password_entry_1)).getText().toString();
-                        final PasswordHasher.Keys keys = PasswordHasher.hash(password, Model.currentModel.scryptParameters);
-                        Model.currentModel.keys = keys;
-                        new StubGoogleDriveIO(PasswordEntryListActivity.this).saveModelAndStartSyncFromDiskToGoogleDrive(new Runnable() {
-                            public void run() {
-                                PasswordEntryListActivity.this.runOnUiThread(new Runnable() {
-                                    public void run() {
-                                        Toast.makeText(PasswordEntryListActivity.this, "Password updated", Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                            }
-                        });
-                    }
-                }).setNegativeButton("Not now", null).setCancelable(true).setOnCancelListener(null).show();
+                showChangePasswordDialog();
+                return true;
+            case R.id.action_bar_add:
+                showAddEntryDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showChangePasswordDialog() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View textEntryView = factory.inflate(R.layout.change_password_alert_dialog, null);
+
+        new AlertDialog.Builder(this).setView(textEntryView).setPositiveButton("Update", new OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                String password = ((EditText) textEntryView.findViewById(R.id.password_entry_1)).getText().toString();
+                final PasswordHasher.Keys keys = PasswordHasher.hash(password, Model.currentModel.scryptParameters);
+                Model.currentModel.keys = keys;
+                new StubGoogleDriveIO(PasswordEntryListActivity.this).saveModelAndStartSyncFromDiskToGoogleDrive(new Runnable() {
+                    public void run() {
+                        PasswordEntryListActivity.this.runOnUiThread(new Runnable() {
+                            public void run() {
+                                Toast.makeText(PasswordEntryListActivity.this, "Password updated", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                });
+            }
+        }).setNegativeButton("Not now", null).setCancelable(true).setOnCancelListener(null).show();
+    }
+
+    private void showAddEntryDialog() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View addEntryView = factory.inflate(R.layout.add_entry_dialog, null);
+
+        new AlertDialog.Builder(this).setView(addEntryView).setPositiveButton("Add", new OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                String title = ((EditText)addEntryView.findViewById(R.id.title)).getText().toString();
+                String userName = ((EditText)addEntryView.findViewById(R.id.username)).getText().toString();
+                String password = ((EditText)addEntryView.findViewById(R.id.password)).getText().toString();
+                Model.currentModel.addPasswordEntry(new PasswordEntry(title, userName, password));
+                bus.post(new PasswordListUpdatedEvent());
+            }
+        }).setNegativeButton("Cancel", null).setCancelable(true).setOnCancelListener(null).show();
     }
 }
