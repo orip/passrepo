@@ -3,11 +3,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent" android:layout_gravity="right|top" android:gravity="right">
 
     <SearchView
             android:layout_width="550dp"
             android:layout_height="wrap_content"
-            android:id="@+id/searchView" android:layout_gravity="center_vertical" android:background="#0ccbff"
-            android:iconifiedByDefault="false" android:queryHint="Click here to seach..."/>
+            android:id="@+id/searchView" android:layout_gravity="right|top" android:background="@android:color/background_dark"
+            android:iconifiedByDefault="false" android:queryHint="Click here to seach..."
+            android:imeOptions="flagNoFullscreen|flagNoExtractUi"/>
 </LinearLayout>
