@@ -94,7 +94,7 @@ public class IO {
                     });
                     GlobalExecutors.MAIN_THREAD_EXECUTOR.execute(new Runnable() {
                         public void run() {
-                            Toast.makeText(context, "Saved, encryption time=" + elapsedMs + "ms", Toast.LENGTH_LONG).show();
+                            //Toast.makeText(context, "Saved, encryption time=" + elapsedMs + "ms", Toast.LENGTH_LONG).show();
                         }
                     });
                 } catch (IOException e) {
