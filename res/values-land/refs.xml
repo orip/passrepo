@@ -1,3 +1,5 @@
 <resources>
     <item type="layout" name="activity_passwordentry_list">@layout/activity_passwordentry_tabbed_horizontal</item>
+    <item type="layout" name="fragment_passwordentry_detail">@layout/fragment_passwordentry_detail_compact</item>
+    <item type="layout" name="fragment_passwordentry_detail_edit">@layout/fragment_passwordentry_detail_edit_compact</item>
 </resources>
